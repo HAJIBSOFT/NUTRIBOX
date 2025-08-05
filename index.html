@@ -774,7 +774,7 @@
     </button>
 
     <script>
-        const deliveryFee = 5;
+        const deliveryFee = 5.75;
         const CART_STORAGE_KEY = 'restaurantAppCart_vOfficialFinal';
         const VAT_RATE = 0.15; // 15% VAT rate
         const COMPACT_VIEW_STORAGE_KEY = 'restaurantApp_compactView_vOfficialFinal';
@@ -2501,7 +2501,7 @@
             const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
             showNotification("جاري تحويلك للواتساب لإرسال الطلب...");
             setTimeout(() => {
-                 window.open(whatsappUrl, '_blank');
+                window.location.href = whatsappUrl;
                  emptyCartAfterCheckout();
             }, 1500);
         });
