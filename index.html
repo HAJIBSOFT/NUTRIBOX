@@ -1,0 +1,2551 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NUTRI BOX - نيوتري بوكس</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #1A1D2B;
+            --bg-cards: #252936;
+            --bg-sidebar: #2C3040;
+            --primary-accent: #FF8C00;
+            --secondary-accent: #FFD700;
+            --text-light: #F0F0F0;
+            --text-muted: #A0A0A0;
+            --border-color: #3A3F51;
+            --success-color: #32CD32;
+            --font-main: 'Cairo', sans-serif;
+            --shadow-soft: 0 6px 18px rgba(0, 0, 0, 0.2);
+            --shadow-medium: 0 10px 30px rgba(0, 0, 0, 0.25);
+            --border-radius: 10px;
+            --transition-main: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-dark); z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+            transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+        }
+        #preloader.hidden { opacity: 0; visibility: hidden; }
+        .spinner {
+            width: 45px; height: 45px; border: 5px solid var(--border-color);
+            border-top-color: #25d366; border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.7;
+            overflow-x: hidden;
+            font-weight: 400;
+        }
+
+        .navbar {
+            background-color: rgba(26, 29, 43, 0.9);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            color: var(--text-light); padding: 15px 30px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 1000;
+        }
+        .navbar-brand {
+            font-family: var(--font-main);
+            font-size: 1.8em; font-weight: 800;
+            color: #25d366; text-decoration: none;
+            letter-spacing: 0.5px;
+        }
+        .cart-toggle-button {
+            background: none; border: none; font-size: 1.6em;
+            color: var(--text-light); cursor: pointer; position: relative; padding: 8px;
+            transition: color 0.3s;
+        }
+        .cart-toggle-button:hover { color: #25d366; }
+        .cart-toggle-button .cart-count-badge {
+            position: absolute; top: 0px; right: -3px;
+            background-color: #25d366; color: var(--bg-dark);
+            font-size: 0.5em; padding: 3px 6px;
+            border-radius: 50%; font-weight: bold;
+            border: 1px solid var(--bg-sidebar);
+        }
+
+        .hero-section {
+            height: auto;
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 50px 20px;
+            background: linear-gradient(rgba(26, 29, 43, 0.75), rgba(26, 29, 43, 0.9)),
+                        url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&q=80&w=1740') no-repeat center center/cover;
+            color: var(--text-light);
+            margin-bottom: 30px;
+        }
+        .hero-logo {
+            max-width: 130px; margin-bottom: 20px; border-radius: var(--border-radius);
+            
+        }
+        .hero-section h1 {
+            font-family: var(--font-main);
+            font-size: 2.8em; font-weight: 800;
+            margin-bottom: 10px; text-shadow: 1px 1px 5px rgba(0,0,0,0.4);
+        }
+        .hero-section .hero-subtitle {
+            font-size: 1.15em;
+            font-weight: 400;
+            max-width: 650px;
+            margin: 0 auto 25px auto;
+            color: var(--text-muted);
+            /* line-height: 1.6; */
+        }
+        .hero-cta-button {
+            background-color: #25d366; color: var(--bg-dark);
+            padding: 10px 25px; border-radius: 25px;
+            text-decoration: none; font-weight: 700; font-size: 1em;
+            transition: var(--transition-main);
+            box-shadow: 0 3px 10px rgba(255, 140, 0, 0.25);
+        }
+        .hero-cta-button:hover {
+            background-color: #4f8050;
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .container {
+            max-width: 1200px; margin-left: auto; margin-right: auto;
+            padding-left: 15px; padding-right: 15px;
+            margin-top: 30px; margin-bottom: 30px;
+        }
+
+        .controls-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* Default alignment */
+            margin-bottom: 30px;
+            gap: 15px;
+            flex-wrap: nowrap; /* Prevent wrapping by default for desktop */
+            padding: 15px;
+            background-color: var(--bg-cards);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-soft);
+        }
+        .search-container {
+            position: relative;
+            flex-grow: 1;
+            min-width: 200px; /* Adjust as needed for mobile */
+        }
+        #search-input {
+            width: 100%; padding: 12px 18px 12px 45px;
+            border: 1px solid var(--border-color); border-radius: 25px;
+            font-family: var(--font-main); font-size: 0.95em;
+            outline: none; transition: var(--transition-main);
+            background-color: var(--bg-dark); color: var(--text-light);
+        }
+        #search-input::placeholder { color: var(--text-muted); }
+        #search-input:focus {
+            border-color: #25d366;
+            box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.15);
+        }
+        .search-icon {
+            position: absolute; left: 18px; top: 50%;
+            transform: translateY(-50%); color: var(--text-muted); font-size: 1.1em;
+        }
+        html[dir="rtl"] .search-icon { right: 18px; left: auto; }
+        html[dir="rtl"] #search-input { padding: 12px 45px 12px 18px; }
+
+        .view-toggle-btn {
+            background-color: var(--bg-dark); color: var(--text-light);
+            border: 1px solid var(--border-color); padding: 10px;
+            border-radius: var(--border-radius); cursor: pointer; font-size: 1.3em;
+            transition: var(--transition-main); display: flex; align-items: center; justify-content: center;
+            width: 45px; height: 45px;
+            flex-shrink: 0;
+        }
+        .view-toggle-btn:hover, .view-toggle-btn.active-compact-view {
+            background-color: #25d366; color: var(--bg-dark);
+            border-color: #25d366;
+        }
+
+        /* Filters Styling */
+        .filters-container-wrapper {
+            overflow-x: auto;
+            overflow-y: hidden; /* إزالة شريط التمرير العمودي */
+            padding-bottom: 12px; /* Ensure space for horizontal scrollbar if needed */
+            margin-bottom: 35px;
+            -webkit-overflow-scrolling: touch;
+            height: auto; /* Allow height to be determined by content */
+        }
+        .filters-container-wrapper::-webkit-scrollbar { height: 5px; }
+        .filters-container-wrapper::-webkit-scrollbar-thumb { background: #25d366; border-radius: 8px; }
+        .filters-container-wrapper::-webkit-scrollbar-track { background: var(--border-color); border-radius: 8px; }
+
+        .filters-container {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 12px;
+            padding-bottom: 5px; /* For scrollbar visibility */
+            align-items: center; /* Ensure buttons are aligned if they have different heights */
+        }
+        .filter-btn {
+            font-family: var(--font-main); /* التأكد من تطبيق الخط */
+            background-color: var(--bg-cards); color: var(--text-light);
+            border: 1px solid var(--border-color); padding: 8px 20px;
+            border-radius: 20px; cursor: pointer; font-size: 0.9em; font-weight: 600;
+            transition: var(--transition-main); white-space: nowrap; flex-shrink: 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .filter-btn:hover {
+            background-color: #4f8050; color: var(--bg-dark);
+            border-color: #4f8050; transform: translateY(-1px);
+        }
+        .filter-btn.active {
+            background-color: #25d366; color: var(--bg-dark);
+            border-color: #25d366; font-weight: 700;
+            box-shadow: 0 3px 8px rgba(255, 140, 0, 0.2);
+        }
+
+        .category-section { margin-bottom: 50px; }
+        .category-title {
+            font-family: var(--font-main);
+            font-size: 2em; font-weight: 700;
+            color: var(--text-light); padding-bottom: 10px; margin-bottom: 30px;
+            text-align: right; position: relative;
+            border-bottom: 2px solid #25d366; display: inline-block;
+        }
+         .category-title::after {
+            content: ''; position: absolute;
+            bottom: -4px; right: 0; width: 40px; height: 3px;
+            background-color: #4f8050;
+            border-radius: 2px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        @media (max-width: 600px) {
+            .controls-bar {
+                flex-wrap: nowrap; 
+                align-items: center; 
+            }
+            .search-container {
+                flex-grow: 1; 
+                 margin-left: 10px; 
+            }
+             html[dir="rtl"] .search-container {
+                margin-left: 0;
+                margin-right: 10px;
+            }
+            .view-toggle-btn {
+                flex-shrink: 0; 
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+             body.compact-view .products-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+        }
+
+
+        .product-card {
+            background-color: var(--bg-cards);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-soft);
+            transition: var(--transition-main);
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-medium);
+        }
+        .product-image-container {
+            width: 100%; height: 220px; overflow: hidden; position: relative;
+        }
+         @media (max-width: 600px) {
+            .product-image-container { height: 160px; }
+             body.compact-view .product-image-container { height: 180px; }
+        }
+
+        .product-card img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.35s ease-out;
+        }
+        .product-card:hover img { transform: scale(1.08); }
+
+        .product-card-content {
+            padding: 15px; display: flex; flex-direction: column;
+            flex-grow: 1; position: relative;
+        }
+        @media (max-width: 600px) { .product-card-content { padding: 12px; } }
+
+        .product-card h3 {
+            font-family: var(--font-main);
+            font-weight: 700; font-size: 1.15em;
+            color: var(--text-light); margin-bottom: 8px; line-height: 1.4;
+            min-height: 2.8em; /* Adjusted to give more space if needed */
+        }
+         @media (max-width: 600px) { .product-card h3 { font-size: 1em; min-height: 2.4em; margin-bottom: 6px;} }
+        
+        /* Styles for Nutrition Info */
+        .product-nutrition {
+            font-size: 0.85em;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            min-height: 5.5em; /* Adjusted to fit the new protein line */
+            display: flex;
+            flex-direction: column;
+            gap: 4px; /* Space between each nutrition line */
+        }
+
+        .product-nutrition span {
+            display: flex;
+            align-items: center;
+        }
+
+        .product-nutrition i {
+            color: #25d366;
+            width: 20px; /* Ensures text alignment is consistent */
+            text-align: center;
+        }
+        
+        html[dir="rtl"] .product-nutrition i {
+             margin-left: 8px; /* Space between icon and text */
+        }
+        
+        @media (max-width: 600px) {
+            .product-nutrition {
+                font-size: 0.8em;
+                min-height: 5em;
+                margin-bottom: 8px;
+            }
+        }
+
+        .product-card .price {
+            font-size: 1.1em; margin-bottom: 12px; font-weight: 700;
+            color: var(--success-color);
+        }
+         @media (max-width: 600px) { .product-card .price { font-size: 1em; margin-bottom: 10px;} }
+
+        .product-card-actions { margin-top: auto; }
+        .product-card .customize-btn,
+        .product-card .direct-add-btn {
+            background-color: #25d366; color: var(--bg-dark);
+            border: none; padding: 10px 15px;
+            font-size: 0.9em; font-weight: 700;
+            border-radius: 20px; cursor: pointer;
+            transition: var(--transition-main); width: 100%;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .product-card .customize-btn:hover,
+        .product-card .direct-add-btn:hover {
+            background-color: #4f8050; transform: scale(1.02);
+        }
+        @media (max-width: 600px) {
+            .product-card .customize-btn,
+            .product-card .direct-add-btn { padding: 8px 10px; font-size: 0.8em; }
+        }
+
+        body.compact-view .products-grid {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        body.compact-view .product-image-container { height: 150px; }
+        body.compact-view .product-card-content { padding: 12px; }
+        body.compact-view .product-card h3 { font-size: 1em; min-height: 2.4em; }
+        body.compact-view .product-nutrition { font-size: 0.8em; min-height: 5em; }
+        body.compact-view .product-card .price { font-size: 0.95em; }
+        body.compact-view .product-card .customize-btn,
+        body.compact-view .product-card .direct-add-btn { padding: 8px 12px; font-size: 0.85em; }
+
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background-color: rgba(0,0,0,0.8);
+            z-index: 1001; justify-content: center; align-items: center;
+            backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background-color: var(--bg-cards); color: var(--text-light);
+            padding: 25px; border-radius: var(--border-radius);
+            box-shadow: var(--shadow-medium);
+            width: 90%; max-width: 550px; max-height: 85vh;
+            overflow-y: auto; position: relative; animation: zoomInModal 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        @keyframes zoomInModal { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
+        .modal-close-btn {
+            position: absolute; top: 12px; left: 12px;
+            background: none; border: none; font-size: 2em;
+            color: var(--text-muted); cursor: pointer; line-height: 1; padding: 5px;
+            transition: color 0.3s, transform 0.3s;
+        }
+        html[dir="rtl"] .modal-close-btn { right: 12px; left: auto; }
+        .modal-close-btn:hover { color: #25d366; transform: rotate(90deg); }
+
+        .modal-product-image {
+            width: 100%; max-height: 250px; object-fit: cover;
+            border-radius: var(--border-radius); margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        }
+        .modal-product-title {
+            font-family: var(--font-main); font-size: 1.8em; color: #25d366;
+            margin-bottom: 8px; text-align: center; font-weight: 700;
+        }
+        .modal-product-base-price { font-size: 1.1em; color: var(--text-light); text-align: center; margin-bottom: 6px; }
+        .modal-current-item-price {
+            font-size: 1.4em; color: #25d366; font-weight: bold;
+            text-align: center; margin-bottom: 20px; margin-top: 6px;
+        }
+        .modal-customizations .option-group { margin-bottom: 20px; }
+        .modal-customizations .option-group legend {
+            font-weight: 700; margin-bottom: 12px; color: #4f8050; font-size: 1.1em;
+            padding-bottom: 6px; border-bottom: 1px solid var(--border-color);
+        }
+        .modal-customizations .option-item { display: block; margin-bottom: 10px; font-size: 1em; }
+        .modal-customizations .option-item label { margin-right: 8px; cursor: pointer; }
+        .modal-customizations .option-item input {
+            margin-left: 10px; vertical-align: middle;
+            transform: scale(1.15); accent-color: #25d366;
+        }
+        html[dir="rtl"] .modal-customizations .option-item label { margin-left: 8px; margin-right: 0; }
+        html[dir="rtl"] .modal-customizations .option-item input { margin-right: 10px; margin-left: 0; }
+
+        .modal-quantity-controls { display: flex; justify-content: center; align-items: center; margin: 25px 0; }
+        .modal-quantity-controls input[type="number"] {
+            width: 70px; padding: 10px; text-align: center;
+            border: 1px solid var(--border-color); border-radius: var(--border-radius);
+            font-size: 1em; margin: 0 10px; font-family: var(--font-main);
+            background-color: var(--bg-dark); color: var(--text-light);
+        }
+        .modal-add-to-cart-btn {
+            background-color: #25d366; color: var(--bg-dark);
+            border: none; padding: 12px 25px; text-align: center; display: block; width: 100%;
+            font-size: 1.1em; font-weight: 700; border-radius: 25px; cursor: pointer;
+            transition: var(--transition-main); box-shadow: 0 3px 10px rgba(255, 140, 0, 0.2);
+        }
+        .modal-add-to-cart-btn:hover {
+            background-color: #4f8050; transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.25);
+        }
+        .modal-add-to-cart-btn i { margin-left: 8px; }
+        html[dir="rtl"] .modal-add-to-cart-btn i { margin-right: 8px; margin-left: 0; }
+
+        .cart-sidebar {
+            position: fixed; top: 0; width: 100%; height: 100%;
+            background-color: var(--bg-sidebar);
+            box-shadow: -4px 0 20px rgba(0,0,0,0.25);
+            padding: 0; box-sizing: border-box;
+            z-index: 1002; display: flex; flex-direction: column;
+            right: -100%; transition: right 0.35s cubic-bezier(0.65, 0.05, 0.36, 1);
+        }
+        html[dir="rtl"] .cart-sidebar {
+            left: -100%; right: auto;
+            transition: left 0.35s cubic-bezier(0.65, 0.05, 0.36, 1);
+        }
+        .cart-sidebar.open { right: 0; }
+        html[dir="rtl"] .cart-sidebar.open { left: 0; }
+
+        .cart-sidebar-header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border-color); padding: 20px 25px;
+            flex-shrink: 0; background-color: var(--bg-cards);
+        }
+        .cart-sidebar-header h2 {
+            margin: 0; font-family: var(--font-main); font-size: 1.6em;
+            color: #25d366; font-weight: 700;
+        }
+        .close-cart-btn-sidebar {
+            background: none; border: none; font-size: 2em; cursor: pointer;
+            color: var(--text-muted); padding:5px; transition: var(--transition-main);
+        }
+        .close-cart-btn-sidebar:hover { color: #25d366; transform: rotate(90deg); }
+
+        .cart-items-list-container {
+            flex-grow: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+            padding: 20px 25px;
+        }
+        .cart-items-list { list-style-type: none; padding: 0; }
+        .cart-items-list li {
+            padding: 15px 0; border-bottom: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.95em;
+        }
+        .cart-items-list li:last-child { border-bottom: none; }
+        .cart-item-details { flex-grow: 1; margin-right: 12px; }
+        html[dir="rtl"] .cart-item-details { margin-left: 12px; margin-right: 0; }
+        .cart-item-details .item-name { font-weight: 600; font-size: 1.05em; color: var(--text-light); }
+        .cart-item-details .item-customizations { font-size: 0.8em; color: var(--text-muted); margin-top: 5px; }
+        .cart-item-details .item-customizations div { margin-bottom: 3px; }
+        .cart-item-details .item-qty-price { font-size: 0.85em; color: var(--text-light); margin-top: 6px; }
+        .cart-item-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+        .cart-item-actions .item-total-price { font-weight: bold; font-size: 1em; color: #25d366; }
+        .remove-item-btn {
+            background-color: var(--border-color) !important; color: var(--text-light) !important;
+            border: none !important; padding: 6px 9px !important;
+            font-size: 0.9em !important; border-radius: var(--border-radius); cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .remove-item-btn:hover { background-color: #25d366 !important; color: var(--bg-dark) !important; transform: scale(1.05); }
+
+        .cart-sidebar-footer {
+            border-top: 1px solid var(--border-color); padding: 20px 25px;
+            flex-shrink: 0; background-color: var(--bg-cards);
+        }
+        .delivery-options { margin-bottom: 15px; text-align: center; }
+        .delivery-options label { margin: 0 10px; cursor: pointer; font-size: 0.95em; }
+        .delivery-options input[type="radio"] {
+            margin-left: 5px; transform: scale(1.05); vertical-align: middle;
+            accent-color: #25d366;
+        }
+        html[dir="rtl"] .delivery-options input[type="radio"] { margin-right: 5px; margin-left: 0; }
+
+        .cart-sidebar-footer textarea {
+            width: 100%; padding: 10px; margin-bottom: 15px;
+            border: 1px solid var(--border-color); border-radius: var(--border-radius);
+            box-sizing: border-box; min-height: 70px; resize: vertical;
+            font-family: var(--font-main); font-size: 0.95em;
+            background-color: var(--bg-sidebar); color: var(--text-light);
+        }
+        .cart-sidebar-footer textarea::placeholder { color: var(--text-muted); }
+
+        .summary-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 1em; }
+        .summary-line.vat-line { font-size: 0.85em; color: var(--text-muted); }
+        .summary-line.total {
+            font-family: var(--font-main); font-weight: 700; font-size: 1.3em;
+            color: #25d366; margin-top:10px; padding-top: 8px;
+            border-top: 1px solid var(--border-color);
+        }
+        .cart-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .checkout-btn-whatsapp {
+            width: 100%; background-color: #25D366; color: white; border: none;
+            padding: 12px 20px; font-size: 1.05em; font-weight: 700;
+            border-radius: 25px; transition: var(--transition-main);
+            box-shadow: 0 3px 10px rgba(37, 211, 102, 0.2);
+        }
+        .checkout-btn-whatsapp:hover { background-color: #1DA851; transform: scale(1.02); }
+        .clear-cart-btn {
+            width: 100%; background-color: var(--border-color); color: var(--text-light);
+            font-size: 0.95em; padding: 10px 15px; border-radius: 25px; border: none;
+            transition: var(--transition-main);
+        }
+        .clear-cart-btn:hover { background-color: #4a4e69; transform: scale(1.02); }
+        #empty-cart-message { text-align: center; color: var(--text-muted); font-size: 1.1em; padding: 20px; }
+
+        .notification-toast {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(20px);
+            background-color: #25d366; color: var(--bg-dark);
+            padding: 15px 30px; border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.25); z-index: 1003;
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+            font-size: 1em; font-weight: 600;
+        }
+        .notification-toast.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+        .notification-toast i { margin-right: 10px; }
+        html[dir="rtl"] .notification-toast i { margin-left: 10px; margin-right: 0; }
+
+        .site-footer {
+            background-color: var(--bg-cards); color: var(--text-muted);
+            padding: 50px 0 25px 0; text-align: center; margin-top: 60px;
+            border-top: 3px solid #25d366;
+        }
+        .footer-content {
+            display: flex; flex-wrap: wrap; justify-content: space-around;
+            align-items: flex-start; gap: 35px; margin-bottom: 35px;
+        }
+        .footer-logo-area, .footer-contact-info, .footer-social-links {
+            flex: 1; min-width: 260px; padding: 0 15px;
+        }
+        .footer-logo-img { max-width: 150px; margin-bottom: 15px; }
+        .footer-tagline { font-size: 0.95em; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6; }
+        .footer-section-title {
+            font-size: 1.3em; color: #4f8050;
+            margin-bottom: 18px; font-weight: 700;
+        }
+        .footer-contact-info p { font-size: 0.9em; margin-bottom: 8px; line-height: 1.7; }
+        .footer-contact-info p i { margin-left: 8px; color: #4f8050; width: 20px; }
+        html[dir="rtl"] .footer-contact-info p i { margin-right: 8px; margin-left: 0; }
+        .footer-social-links a {
+            color: var(--text-muted); font-size: 1.8em; margin: 0 12px;
+            transition: color 0.3s ease, transform 0.2s ease; display: inline-block;
+        }
+        .footer-social-links a:hover { color: #25d366; transform: translateY(-3px) scale(1.1); }
+        .footer-bottom {
+            border-top: 1px solid var(--border-color);
+            padding-top: 25px; font-size: 0.85em; color: var(--text-muted);
+        }
+        .footer-bottom a { color: #4f8050; text-decoration: none; }
+        .footer-bottom a:hover { text-decoration: underline; }
+
+        #scroll-to-top-btn {
+            position: fixed; bottom: 20px; right: 20px;
+            width: 45px; height: 45px;
+            background-color: #25d366; color: var(--bg-dark);
+            border: none; border-radius: 50%; font-size: 1.4em;
+            cursor: pointer; display: none; justify-content: center; align-items: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2); z-index: 999;
+            transition: background-color 0.3s, opacity 0.3s, transform 0.3s;
+        }
+        html[dir="rtl"] #scroll-to-top-btn { right: auto; left: 20px; }
+        #scroll-to-top-btn:hover { background-color: #4f8050; transform: scale(1.08); }
+
+        .animate-on-scroll {
+            opacity: 0; transform: translateY(25px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+        .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 12px 20px; }
+            .navbar-brand { font-size: 1.5em; }
+            .hero-section {/* min-height: auto; */padding: 40px 15px;}
+            .hero-logo { max-width: 500px; }
+            .hero-section h1 {/* font-size: 2.2em; */}
+            .hero-section .hero-subtitle { font-size: 1.15em; }
+            .controls-bar { padding: 12px; }
+            .cart-sidebar { width: 300px; }
+            html[dir="rtl"] .cart-sidebar { left: -320px; }
+        }
+        @media (max-width: 480px) {
+            /* .controls-bar already handled by (max-width: 600px) to keep search and view toggle on same line */
+            .cart-sidebar { width: 100%; }
+            html[dir="rtl"] .cart-sidebar { left: -100%; }
+            .modal-product-title { font-size: 1.5em; }
+            .footer-content { flex-direction: column; align-items: center; }
+        }
+        @media (min-width: 769px) {
+            .cart-sidebar { width: 380px; }
+            html[dir="rtl"] .cart-sidebar { left: -400px; }
+        }
+
+    </style>
+</head>
+<body>
+    <div id="preloader"><div class="spinner"></div></div>
+
+    <nav class="navbar">
+        <a href="#" class="navbar-brand">NUTRI BOX - نيوتري بوكس</a>
+        <button class="cart-toggle-button" id="cart-toggle-btn" aria-label="فتح سلة التسوق">
+            <i class="fas fa-shopping-basket"></i>
+            <span class="cart-count-badge" id="cart-count-badge">0</span>
+        </button>
+    </nav>
+
+    <header class="hero-section">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhiO7utoiu5OKOGd6Sppo0FPzs26Wje5dOb3bXSYIQAx1jqmZlG28WHFoyQebTuUwn45f98KLne_FvPJX0e2LCfEz9xmGoHwLvZRuCk2ZT_x4RIM3ZYUkHz5P1m9THpTY592vzUE4UBYcc7KT9ggJ6HTTlIJ7KWcUOgaYiTIYFWYl_UlITMzpQRw8uTXD9e/s300/WhatsApp_Image_2025-08-03_at_1.35.08_PM-removebg-preview.png" alt="شعار مطعم NUTRI BOX - نيوتري بوكس" class="hero-logo">
+        <h1>NUTRI BOX  نيوتري بوكس</h1>
+        <p class="hero-subtitle">خيارك الأمثل للأكل الصحي! وجبات متوازنة، طازجة، ولذيذة، مصممة لتغذي جسمك وتناسب أسلوب حياتك</p>
+        <a href="#menu-container-start" class="hero-cta-button">شيك ع المنيو <i class="fas fa-chevron-down"></i></a>
+    </header>
+
+    <div class="modal-overlay" id="customization-modal-overlay">
+        <div class="modal-content" id="customization-modal-content">
+            <button class="modal-close-btn" id="modal-close-btn" aria-label="إغلاق">×</button>
+            <img src="" alt="Product Image" class="modal-product-image" id="modal-product-image">
+            <h2 class="modal-product-title" id="modal-product-title"></h2>
+            <p class="modal-product-base-price" id="modal-product-base-price"></p>
+            <p class="modal-current-item-price" id="modal-current-item-price"></p>
+            <div class="modal-customizations" id="modal-customizations-container"></div>
+            <div class="modal-quantity-controls">
+                <input type="number" id="modal-quantity" value="1" min="1" aria-label="الكمية">
+            </div>
+            <button class="modal-add-to-cart-btn" id="modal-add-to-cart-btn">
+                أضف للطلبات <i class="fas fa-plus-circle"></i>
+            </button>
+        </div>
+    </div>
+    <div class="page-overlay" id="page-overlay"></div>
+
+    <main class="container" id="menu-container-start">
+        <div class="controls-bar animate-on-scroll">
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="ابحث عن طبقك المفضل هنا...">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            <button id="toggle-view-btn" class="view-toggle-btn" title="تغيير طريقة العرض">
+                <i class="fas fa-th-large"></i>
+            </button>
+        </div>
+
+        <div class="filters-container-wrapper animate-on-scroll">
+            <div class="filters-container" id="filters-container"></div>
+        </div>
+
+        <div id="menu-sections"></div>
+    </main>
+
+    <aside class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-sidebar-header">
+            <h2>سلة طلباتك</h2>
+            <button class="close-cart-btn-sidebar" id="close-cart-btn-sidebar" aria-label="إغلاق السلة">×</button>
+        </div>
+        <div class="cart-items-list-container">
+            <ul id="cart-items-list" class="cart-items-list">
+                <li id="empty-cart-message" style="display: list-item;">سلتك فارغة حالياً. ابدأ بإضافة أطباقك المفضلة!</li>
+            </ul>
+        </div>
+        <div class="cart-sidebar-footer">
+            <div class="delivery-options">
+                <label><input type="radio" name="deliveryType" value="pickup" checked> استلام من المطعم</label>
+                <label><input type="radio" name="deliveryType" value="delivery"> توصيل (داخل الحي)</label>
+            </div>
+            <textarea id="general-order-notes" placeholder="ملاحظات إضافية على الطلب (اختياري)"></textarea>
+            
+            <div class="summary-line" id="table-number-line" style="display: none; color: #4f8050; font-weight: bold;">
+                <span>رقم الطاولة:</span>
+                <span id="table-number-display"></span>
+            </div>
+
+            <div class="summary-line">
+                <span>المجموع الفرعي (شامل الضريبة):</span>
+                <span id="cart-subtotal-amount">0</span> ريال
+            </div>
+            <div class="summary-line vat-line" id="vat-line-details" style="display: none;">
+                <span>ضريبة القيمة المضافة (15%):</span>
+                <span id="cart-vat-amount">0</span> ريال
+            </div>
+            <div class="summary-line" id="delivery-fee-line" style="display: none;">
+                <span>رسوم التوصيل:</span>
+                <span id="delivery-fee-amount">0</span> ريال
+            </div>
+            <div class="summary-line total">
+                <span>الإجمالي النهائي:</span>
+                <span id="cart-grand-total-amount">0</span> ريال
+            </div>
+            <div class="cart-actions">
+                <button class="checkout-btn-whatsapp" id="checkout-btn">
+                    إرسال الطلب عبر واتساب <i class="fab fa-whatsapp"></i>
+                </button>
+                <button class="clear-cart-btn" id="clear-cart-btn">
+                    إفراغ السلة <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <div class="notification-toast" id="notification-toast">
+        <i class="fas fa-bell"></i> <span id="notification-message"></span>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-content container">
+            <div class="footer-logo-area animate-on-scroll">
+               <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhiO7utoiu5OKOGd6Sppo0FPzs26Wje5dOb3bXSYIQAx1jqmZlG28WHFoyQebTuUwn45f98KLne_FvPJX0e2LCfEz9xmGoHwLvZRuCk2ZT_x4RIM3ZYUkHz5P1m9THpTY592vzUE4UBYcc7KT9ggJ6HTTlIJ7KWcUOgaYiTIYFWYl_UlITMzpQRw8uTXD9e/s300/WhatsApp_Image_2025-08-03_at_1.35.08_PM-removebg-preview.png" alt="شعار مطعم NUTRI BOX - نيوتري بوكس" class="footer-logo-img">
+               <p class="footer-tagline">الرياض، العارض، تقاطع شارع ريحانة مع طريق الملك عبد العزيز</p>
+			   <div class="footer-social-links animate-on-scroll">
+                <h3 class="footer-section-title"></h3>
+                <a href="https://api.whatsapp.com/send/?phone=966552599891" target="_blank" aria-label="واتساب"><i class="fa-brands fa-whatsapp"></i></a>
+			   <a href="https://maps.app.goo.gl/nQ7enZugcLCmwyGs9" target="_blank" aria-label="ماب"><i class="fa-solid fa-location-dot"></i></a>
+            </div>
+			  
+            </div>
+            <div class="footer-social-links animate-on-scroll">
+                <h3 class="footer-section-title">حمل تطبيقنا</h3>
+                <a href="http://d.techrar.com/schoolnutrition" target="_blank" aria-label="بلايستور"><i class="fa-brands fa-google-play"></i></a>
+                <a href="http://d.techrar.com/schoolnutrition" target="_blank" aria-label="ابستور"><i class="fa-brands fa-app-store-ios"></i></a>
+            </div>
+          
+        </div>
+        <div class="footer-bottom">
+            <p>© <span id="current-year"></span> جميع الحقوق محفوظة لـ <a href="https://hajibsoft.github.io/QR-menu/" target="_blank">حاجب سوفت</a>.</p>
+        </div>
+    </footer>
+
+    <button id="scroll-to-top-btn" aria-label="العودة للأعلى">
+        <i class="fas fa-angle-up"></i>
+    </button>
+
+    <script>
+        const deliveryFee = 5;
+        const CART_STORAGE_KEY = 'restaurantAppCart_vOfficialFinal';
+        const VAT_RATE = 0.15; // 15% VAT rate
+        const COMPACT_VIEW_STORAGE_KEY = 'restaurantApp_compactView_vOfficialFinal';
+
+        const productsData = [
+    {
+        "id": "1e701a",
+        "name": "طبق كريب",
+        "category": "اطباق الإفطار",
+        "description": "السعرات الحرارية: 240 سعرة\nالكربوهيدرات: 29.6 جم\nالبروتين: 9.5 جم\nالدهون: 9.7 جم",
+        "basePrice": 10.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh5pQu4pxR-BZ4-3M2LZFLkK6hyphenhyphenyg1NYcLYHPMHKK68t0FA6JriGkhr0-AgabgXWrlcwullsItOz-IsFU2FBU2pVSGUnM2v52RixrX9kPjNP_wavayT1pnZym4py29ioaZMNpPHxWVucT6u1ZxbNHyFPMU6OhwmY0KKG1zmPZB45jkW6casSr8Qs92nZ3uY/s353/Crape.jpg"
+    },
+    {
+        "id": "e03ba2",
+        "name": "طبق توست فرنسي",
+        "category": "اطباق الإفطار",
+        "description": "السعرات الحرارية: 226 سعرة\nالكربوهيدرات: 44 جم\nالبروتين: 8 جم\nالدهون: 3 جم",
+        "basePrice": 10.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh28ocFXTgP_KNrI3M8nleVwP8XAEhtqWaJW1Q_BlCl4HyWW07ZDP1CbMsqZIRBGPnL4xo6pRATnifPUNQqkYDOvMCKya1DEWspTiGxUqlwNjym43TkyarCxd89vWkIP2Ps4gj34igWbqz4mhSfvdUdA51MYp0MZt6DTlipSJORIjvmEj7e4QuI0miwueVY/s387/French%20toast.jpg"
+    },
+    {
+        "id": "cd07cc",
+        "name": "طبق وافل",
+        "category": "اطباق الإفطار",
+        "description": "السعرات الحرارية: 306 سعرة\nالكربوهيدرات: 36.7 جم\nالبروتين: 4.9 جم\nالدهون: 13.2 جم",
+        "basePrice": 10.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgSx8rHAMp2SYBaxWkxlQ3mUQoKVyQ_CupC6ONjvuNUu_-nYH6HXMrDGs1zAET6G2nnnwCoy1g_gpAMNNuMQIHHQZseM60_ksC-yH_gZEHmAVG5VIytTP4zB6yTUl9sq_arPuhUcYLQOy29EBgMj7saS-_aMyDMfJtlCy3O5sRB0lZ4Rh_CJQz_UQmwYAZr/s395/Waffles.jpg"
+    },
+    {
+        "id": "b8c0b2",
+        "name": "طبق وافل الموز",
+        "category": "اطباق الإفطار",
+        "description": "السعرات الحرارية: 285 سعرة\nالكربوهيدرات: 35.5 جم\nالبروتين: 4.5 جم\nالدهون: 12.1 جم",
+        "basePrice": 12.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi-d6KQnZMzhViw8-hKTVZu4zsEET16oIUn5DZX_W7YCDLuo_T-DivKy2c4f3w6-QrBmVEhG4CYfJIq9dsSI8NI2tAMnEXhTgKhDSJi4q5TKzjf_yik0ZeK593-QmyXQkRkDMM1s9b0QRw_-pSSXrwzXlBlNwO4DbMH47m-RHL4V-NAyfZC82YZ5PSNM__a/s384/Banana%20waffles.jpg"
+    },
+    {
+        "id": "786e3d",
+        "name": "طبق بان كيك الموز",
+        "category": "اطباق الإفطار",
+        "description": "السعرات الحرارية: 285 سعرة\nالكربوهيدرات: 35.5 جم\nالبروتين: 4.5 جم\nالدهون: 12.1 جم",
+        "basePrice": 12.0,
+        "image": ""
+    },
+    {
+        "id": "21dda1",
+        "name": "ساندويتش بيض",
+        "category": "اطباق الإفطار",
+        "description": "السعرات الحرارية: 214 سعرة\nالكربوهيدرات: 7.7 جم\nالبروتين: 11.1 جم\nالدهون: 15.5 جم",
+        "basePrice": 8.0,
+        "image": ""
+    },
+    {
+        "id": "f6c626",
+        "name": "ساندويتش تركي",
+        "category": "اطباق الإفطار",
+        "description": "السعرات الحرارية: 245 سعرة\nالكربوهيدرات: 15.7 جم\nالبروتين: 18.5 جم\nالدهون: 12 جم",
+        "basePrice": 8.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEimtiI_Mc158XUR7U8byX4B-qvgquuIp9pO1OLv9TShyphenhyphenbxt3oIja6wrmJTxbITT3CWRDfT7CG0sH_OgXW_kdFtxPwgJ2bi1onpzSRk1Eni6UtGzk6kqNr8UdyG1xVMw6oZ2Gt18zbYrA0IhjQtGGpXvhTBs8Clc1T_l1R8nbsj4hrNavqH5p9yhxV_YkiAY/s342/Omelette%20sandwich.jpg"
+    },
+    {
+        "id": "3f419c",
+        "name": "ساندويتش فول سوداني",
+        "category": "اطباق الإفطار",
+        "description": "السعرات الحرارية: 320 سعرة\nالكربوهيدرات: 30 جم\nالبروتين: 17 جم\nالدهون: 14 جم",
+        "basePrice": 8.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi4hkwLLc-AS9PYl3ViTYc6C_qCDjukO6f0VyCVluIsS1gIHmsH6dJONSu2vtOqAw20RGpLspX6SYyT2td76fDh-dVxvHAkhsnoiYDTyZiIgSlVJ0dUSO9wFxz1GGCFrCn6WBPChSDd-eWXNClAQMfFZUOojXGo1sPO8VUceR_laR9NLLNRX1-cBHtS400G/s348/Peanut%20sandwich.jpg"
+    },
+    {
+        "id": "f5a713",
+        "name": "ساندويتش جبن فيتا",
+        "category": "اطباق الإفطار",
+        "description": "السعرات الحرارية: 246 سعرة\nالكربوهيدرات: 15 جم\nالبروتين: 19 جم\nالدهون: 7.3 جم",
+        "basePrice": 8.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEifV6V0hVz8gkEUA_tzpQnW9yAR1zK43bzubz8uJcpeTirsiMzayQ2mVioDsx2Y12HDovE98o4dxdA0kv-SlZpuFDrZxTNbfQL87T2184yrKYlBc03qrX1rhYWXYXuEvMic2K60eKLkNLqMpIgomw0q5jjKU2-Ypm9t-l-5PjEGOn7ZZEphu4IfBy96eaMP/s345/Feta%20Cheese%20sandwich.jpg"
+    },
+    {
+        "id": "6f73db",
+        "name": "لحم جامجوري",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 180 سعرة\nالكربوهيدرات: 3 جم\nالبروتين: 20 جم\nالدهون: 11 جم",
+        "basePrice": 28.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgF9jLNvOZxcR83rr6uEJznlSMMFbzxE7vey-2N-UOX3AjHHCQ3KEKTo4wEogkCXTtMVKYJV5hUHKmXLNpwBhxfMERccAc2YfQ7EqGVVKsrrHY23e7IvttkG_uDeb4tJycDMhXpdxBjVLOryDpyx_7Tt4TOlcS9BMbSzCEOMKl6vdwzudlP8VfwLnRwqEgO/s459/Jumjuri.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_bca2e8fe",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_6f73db", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_6f73db", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_6f73db", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_6f73db", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_6f73db", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_6f73db", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_6f73db", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_6f73db", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_6f73db", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "50820a",
+        "name": "لحم ستروجانوف",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 190 سعرة\nالكربوهيدرات: 4 جم\nالبروتين: 17 جم\nالدهون: 11 جم",
+        "basePrice": 28.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjCy_n8vevH_L_ljg7tux_Hpf6kS8DWetipiycSJXbs4hkka-qcuSUDIPsRRATuFNjqU-8hTBqCAKez07joeKIdAZVCwB1mAR9LLOAwYtNvfX5xtLnWZQBXOoNFBOxTjNraAB6ocOgPMxe-TbAcjKZ3UF-eEpM3v8XUk2lW1FDtyutjlO5BFcNJLYPIpwK6/s426/stroganoff.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_3dc2da7d",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_50820a", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_50820a", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_50820a", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_50820a", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_50820a", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_50820a", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_50820a", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_50820a", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_50820a", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "aa73d8",
+        "name": "كرات اللحم",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 223 سعرة\nالكربوهيدرات: 5.6 جم\nالبروتين: 16.9 جم\nالدهون: 15.8 جم",
+        "basePrice": 28.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjqTBDrUjA6Byey6bWTnAiz_kt7DMpyjv7I9fVcajKGypuOMItsN7UKnocsLi5yWc6u6IQUTGCHDtF4Tbw0Af-9vkJ8V3nMjuhK2cCNtjlr0-g-zvRvDGeuCkhgpFOUUh95Q57bAzprnzZAAoKu_sV6JpBpVB0ob5leJi57byDYH6-bsDrwTOO65VZh6BJN/s445/boll.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_7213ceaf",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_aa73d8", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_aa73d8", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_aa73d8", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_aa73d8", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_aa73d8", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_aa73d8", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_aa73d8", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_aa73d8", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_aa73d8", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "a730ff",
+        "name": "لحم فاهيتا",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 170 سعرة\nالكربوهيدرات: 4 جم\nالبروتين: 18 جم\nالدهون: 9 جم",
+        "basePrice": 28.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhI90qmcg-AxaNQU9fuBQIRoV9v3bgLJ_wl-y1EjnzhHp7294NezcdDxXITRsQzg-KcIjj5lule4FwOLu1SvdCbQUubaz9xWvfNaWN7nEUsa4nq-B8lORoVYGB6c7YKvn6asN7wkc1Xuu101Q5ilEvR4FtA56eiHGpRnnRIAN1mFUmhbrDjxT9Mso9mGDRq/s422/Fajita.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_e7b14966",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_a730ff", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_a730ff", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_a730ff", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_a730ff", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_a730ff", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_a730ff", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_a730ff", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_a730ff", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_a730ff", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "342797",
+        "name": "لحم بالحلومي المشوي",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 230 سعرة\nالكربوهيدرات: 1.5 جم\nالبروتين: 19 جم\nالدهون: 17 جم",
+        "basePrice": 28.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg2OdYsSKNeIf8Nh2lh2t7mb7IdY1DHmDqSL9JwBkbaqL0ptgWO44a8AVYbdILcyXkGbHEtr4oQC_EpRiJCiwpY5KU2oH6LK40g2oX9z7CsVTEzWCyzKbB-TS-LrComua9y8Kid8-S1WK2yeKtUyMrQTcXiMzS3XRQGwB-IQsto9lxoDbEn64_4DbzBI3NJ/s439/Halloumi%20with%20beef.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_d01e933e",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_342797", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_342797", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_342797", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_342797", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_342797", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_342797", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_342797", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_342797", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_342797", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "eeba05",
+        "name": "لحم أعشاب",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 175 سعرة\nالكربوهيدرات: 0.5 جم\nالبروتين: 21 جم\nالدهون: 10 جم",
+        "basePrice": 28.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgFS4fd3qTAf_-mYesKsG1hwGtlaOTlB2QjWaF1yezOXMhRswGE3TNmompZmqXJVN5ZD829EtFqm1VLcquvGLQkyJEF5HPfpjNLBRrcwug81yfURdw3U6V2iwHXTAuSsljR0peq_J82sMGGU5QV5sohSElOR5Ry0yeYOwyTKZc9XdpHV2rT8fKJlKXF6jqT/s419/herbis.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_c12a16d9",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_eeba05", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_eeba05", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_eeba05", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_eeba05", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_eeba05", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_eeba05", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_eeba05", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_eeba05", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_eeba05", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "e9a318",
+        "name": "دجاج شمندر",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 130 سعرة\nالكربوهيدرات: 6 جم\nالبروتين: 20 جم\nالدهون: 5.5 جم",
+        "basePrice": 20.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgPCGd94w7n0DjywUcxKeP3zAdif0QqLA-VbAOw2OatWsvgNEKivCLBmDFw0QiRVceAOromE7i09p1mi5iprB1DlGnrULuViHtUs6yfW7tkU2JW-QmQopuA6aoFJlQf1GgrRil3sB87ARXu7oCZBgPPDq7k6FhmX0veoD3KpzJz5R8-8nCAJWlOTP3qWZsN/s375/Beetroot.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_ff976027",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_e9a318", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_e9a318", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_e9a318", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_e9a318", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_e9a318", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_e9a318", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_e9a318", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_e9a318", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_e9a318", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "6d5f35",
+        "name": "دجاج برياني",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 160 سعرة\nالكربوهيدرات: 3 جم\nالبروتين: 22 جم\nالدهون: 6.5 جم",
+        "basePrice": 20.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSIUriP6rndhdtEjH8as5JDqmRUAmjwJiCu5GoZybnngfPjzLsqdfwICkZjYNKhOqvT8xlIzpvHfExrgwBX6OCqQWaTprIPAsPkOc0296AfxGrg1PrZZ5_CwydWIf6wRmqafFV1MbK5nu6KR0wr_W1yX2Hbzfr7zA1ruqATDMjNUBQnPf-QkiXtgyuj9Jc/s366/biriyani.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_ae87e6d6",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_6d5f35", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_6d5f35", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_6d5f35", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_6d5f35", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_6d5f35", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_6d5f35", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_6d5f35", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_6d5f35", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_6d5f35", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "ec76db",
+        "name": "دجاج كاري",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 160 سعرة\nالكربوهيدرات: 5 جم\nالبروتين: 25 جم\nالدهون: 6 جم",
+        "basePrice": 20.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgcAbO1jonwy-DCgNB0N8pDeYA2NOuBVihOPQ3IWfyoUOq0tza2ZkySFiN8YjU52yYRUhGKWr60aT7Je3YB1vaU5esiYfAUVE47El7_209tp6nsQ_I3_7BV4DYL6cKSI8bP7h3rsyHy_T_Eo4Hc4V_6_OyVdhaCtn7uQCDCF6md4-eVdohRLwGDtRC-lxZ6/s409/curry.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_1b244675",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_ec76db", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_ec76db", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_ec76db", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_ec76db", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_ec76db", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_ec76db", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_ec76db", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_ec76db", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_ec76db", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "0f02fc",
+        "name": "دجاج اعشاب",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 165 سعرة\nالكربوهيدرات: 0 جم\nالبروتين: 31 جم\nالدهون: 3.6 جم",
+        "basePrice": 20.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgIjsjcirWIC_XcECQSgoaX6FDtFiQPqE-z1q_9dVmh_9UkeKcIanPS2tCfb6H5O1zp0mMXH7GlsnGr7PZ-TKBxwrVZ2dkZ5YKLlMooJzUj986enkTSZvM_R1AE-BN-fySLoTnjXjnqhNjAORBAr7dyzEpdD8HizD-uYuFKJ4Pz6pnWnGL_UAmnkQnZdPn7/s368/herbis.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_daff4a6f",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_0f02fc", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_0f02fc", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_0f02fc", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_0f02fc", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_0f02fc", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_0f02fc", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_0f02fc", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_0f02fc", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_0f02fc", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "821b6e",
+        "name": "دجاج الملوخية",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 149 سعرة\nالكربوهيدرات: 3.9 جم\nالبروتين: 23.6 جم\nالدهون: 3.5 جم",
+        "basePrice": 20.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgyJ6DT-4if81Jd3raY3zx3SVig9vHxZaLPGqokgMcjMZFQXqPeOYDijVhatTMAW9klp-DrqHvQDqTMBsWu64f_tiBi7YuaROmA_7xScwid40YFChiVYFeGVndSVoBGaCkthmLrzInXx6Mgoyz95rsVUveGBax7AAYd02MgxX9Ys2-f59R1IPpd2ApYlFp1/s400/molokhia.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_1e06fd9d",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_821b6e", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_821b6e", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_821b6e", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_821b6e", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_821b6e", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_821b6e", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_821b6e", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_821b6e", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_821b6e", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "fb7c75",
+        "name": "دجاج الفطر",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 165 سعرة\nالكربوهيدرات: 3.5 جم\nالبروتين: 27 جم\nالدهون: 0.5 جم",
+        "basePrice": 20.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMCXhe11jVO0eQvB_6kEWlY3_rYsayc0faTmID-RbjBHzP-n6ao9qmWFu6DZm4PqNYb_dnb7nCnCMtKgb1NBC1AtyPYk9r8ER8MvL0CXJB6FeSAVm8hs1MoeDNUIafDaII1Y_mBl_bqwaxfnbUGi6eyDBakGf6pSHzB9gtE3Zi5qtR2Dt3cuDkYuvHrujf/s375/mushroom.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_d502b220",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_fb7c75", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_fb7c75", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_fb7c75", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_fb7c75", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_fb7c75", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_fb7c75", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_fb7c75", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_fb7c75", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_fb7c75", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "545ad7",
+        "name": "دجاج بانيه",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 150 سعرة\nالكربوهيدرات: 7 جم\nالبروتين: 18 جم\nالدهون: 4 جم",
+        "basePrice": 20.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgvzFFeOVrf1u3_4mXDOr7uVbyhyphenhyphenl2FulLW4nE58i1Dg-oFoYkMnkidzU1qP-NIVnFlwtWiajkwHst7L1RC-rfQSD3V_wYODq87XlaYezd1qk_9FXJv8yBuESkOfndQDD8keVRGktJ58zDxb3yzIxX1gGz3rN-gAXa113_JkJtQuy1VENyPLtSppq51AXWU/s384/panne.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_19979afc",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_545ad7", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_545ad7", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_545ad7", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_545ad7", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_545ad7", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_545ad7", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_545ad7", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_545ad7", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_545ad7", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "7ba2d9",
+        "name": "دجاج بصوص البيستو",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 180 سعرة\nالكربوهيدرات: 1 جم\nالبروتين: 20 جم\nالدهون: 11 جم",
+        "basePrice": 20.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiXR3siYGVlTk90Hc2ntrtKZbbCfVSEZ7Z-UWPWOqdYhwhwhtBPoJM0GQQows8Ww9N8Jre6HWLzzTe3An_2IqyvHacybg8fP5Xu5SNj3vd6Z71rwbYIzcdN7FJDCvF0CTYn3A51w8GgZ60CAmUE5SEB1Bfyo-DBLFnm0MHGByUUOMJZZWHHvuRT4ona8Dp_/s377/pesto.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_2c1d9419",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_7ba2d9", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_7ba2d9", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_7ba2d9", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_7ba2d9", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_7ba2d9", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_7ba2d9", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_7ba2d9", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_7ba2d9", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_7ba2d9", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "414e1f",
+        "name": "دجاج صيني",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 175 سعرة\nالكربوهيدرات: 3.3 جم\nالبروتين: 24 جم\nالدهون: 6.5 جم",
+        "basePrice": 20.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg3sgaOLJ_w01n7HeFM5ViKfBiYg_vSsvuvhdl11UC6oGBB6hBM8prLmYCeDpWDNIS45tEKkqjJ1TauXHtMTIy5iWM9GdKG74LrGpGdALZkM0tPHhI1DDZDodpkmS3I7G5vU0GuI44ut_qo3Oj5ghjlEljTtSRgrpjL8ZICo369ajRAn5anSGX6yY7FPP9x/s515/Chinese.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_7e29e5fd",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_414e1f", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_414e1f", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_414e1f", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_414e1f", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_414e1f", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_414e1f", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_414e1f", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_414e1f", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_414e1f", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "3a97cc",
+        "name": "دجاج فاهيتا",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 165 سعرة\nالكربوهيدرات: 4 جم\nالبروتين: 23 جم\nالدهون: 6 جم",
+        "basePrice": 20.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgAeeZXgoNaLxxF2piPBAGo2F4UgtzG4mRleCUjETXTq0-wSHGYCDYXYlulFa43Zrzb-XkbBFhYuNQEXkQkvWZ0nLm7VB_5zMjZERd6ifwKTh-DC2X6QJlfPTYsbcG9O4E951nRdE7bdV4E8_wEzz8EC3slQjzATHLuxeSKVKbGdLv4WQ99jwombPQpfmx4/s386/Fajita.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_46f67557",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_3a97cc", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_3a97cc", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_3a97cc", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_3a97cc", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_3a97cc", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_3a97cc", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_3a97cc", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_3a97cc", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_3a97cc", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "5e4e39",
+        "name": "دجاج نيوتري بوكس",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 160 سعرة\nالكربوهيدرات: 2.5 جم\nالبروتين: 24 جم\nالدهون: 5.5 جم",
+        "basePrice": 20.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEji48ZYyKYoGwr4Tmh7b25jB3R1ARu8IKYBiZYtzgfgEXDTMoPMzU0Yh1pKEXLOFIJzS89gcV414KQMybOsAD-AZOaJO8O8doBsATK_dgJYj5F5BfYQEoxUVDPPwbgVr0aMJjML7-Vl0TcKrvMcJtAlANpn9FJw-RVK50ZF_xDIRP-It9J-Dgxx0C-jBpfb/s393/nutri%20box%20chicken.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_acffc72b",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_5e4e39", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_5e4e39", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_5e4e39", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_5e4e39", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_5e4e39", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_5e4e39", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_5e4e39", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_5e4e39", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_5e4e39", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "d1e3eb",
+        "name": "دجاج مشوي",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 155 سعرة\nالكربوهيدرات: 0.5 جم\nالبروتين: 31 جم\nالدهون: 3.5 جم",
+        "basePrice": 20.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjoRj95J_9vtrBKl_0MtaQ439gqp7akbfFL4OxEP4F7q7P6FGbralzznzLH1CS8rA2isk5he2DZ0nT3-7PiDRPd4F7RdBpB2lztmV2v5cCDbIS4ZF1B6dE0PD3NJv3Vw6TWQa_TBKsnAdi5qwU9-fYcKRx0fdiurY4j9INLGustIvAsACZhqcIU0fRLc5mF/s1280/Grilled.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_10874fa1",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_d1e3eb", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_d1e3eb", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_d1e3eb", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_d1e3eb", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_d1e3eb", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_d1e3eb", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_d1e3eb", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_d1e3eb", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_d1e3eb", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "8cc6cf",
+        "name": "دجاج أحمر",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 160 سعرة\nالكربوهيدرات: 4 جم\nالبروتين: 24 جم\nالدهون: 5 جم",
+        "basePrice": 20.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj5gVJK8TDtZAHdM7FdIN3rqkAtuzIY6HBoktW52IJdxZTPMuBOTCW4My3bkYuNtRUhyphenhyphenAyL9q4pA3vRSYsMOEbO9cfM_TuJDwEPR-MlsK3j7LZA19ntEHurP1ERvlbzMzE4pQidA08eI6MFdlJT1mmZxXZLw9mPrTb74kCY-sIoKZiZk2cwGXEOxPPgyYqa/s387/Red.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_3f046fa0",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_8cc6cf", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_8cc6cf", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_8cc6cf", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_8cc6cf", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_8cc6cf", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_8cc6cf", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_8cc6cf", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_8cc6cf", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_8cc6cf", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "9cf4f3",
+        "name": "دجاج شيش طاووق",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 155 سعرة\nالكربوهيدرات: 1.5 جم\nالبروتين: 23 جم\nالدهون: 4.5 جم",
+        "basePrice": 20.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjmKFsB3WsflqYpGd2u68xzPx3Wjl17GnykeK7SZGLZYhd2fMolmuzqsHGchleUnNBTOIv15Wp0V_BjPAlBtaDtY_vW0WVmh7iuCkLo6Fp-1OoVhjRR2Hx646aUqloZAjMxPj7nelsbpj25tJDfX4zWXOQd_QQuqnmjZ6Q9VLLio-afmn9DtHDvGkl2ft0x/s385/Shish%20tawook.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_33f2592d",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_9cf4f3", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_9cf4f3", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_9cf4f3", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_9cf4f3", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_9cf4f3", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_9cf4f3", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_9cf4f3", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_9cf4f3", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_9cf4f3", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "f232a7",
+        "name": "دجاج برتقال",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 165 سعرة\nالكربوهيدرات: 8 جم\nالبروتين: 22 جم\nالدهون: 5 جم",
+        "basePrice": 20.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjT8-jBPV0rBWfet6LtH3DqHeAi_LZubICNc16Q60rRXxLoVTOvqorsDwHvtVS8WkCIZvaG8wVOnFbpESnl-cFgvC5Fpe365yI6YdK3eg3juPm2qXMoJS5BTKgwivxR3GhSqFjpmD-n_rhR8WiFql82sMO-pmr0BR3noAqbRpJ-spi6X4KAQBPkXlqqBtS2/s385/Orange.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_c87b49f2",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_f232a7", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_f232a7", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_f232a7", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_f232a7", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_f232a7", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_f232a7", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_f232a7", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_f232a7", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_f232a7", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "aa4077",
+        "name": "دجاج زبدة",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 175 سعرة\nالكربوهيدرات: 4 جم\nالبروتين: 22 جم\nالدهون: 9 جم",
+        "basePrice": 20.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-SNMKtx9YZqRV8Xm2ruzg07cgsThNQzh7J4DgwLZIF5HIs0ZvDSeg1cGbNZ7y7xDXUsdXeioCF8sFCfM5ZcCR2MDXvov3jXNtSbqhwxDbYuPMglJv9-dDsBW_R1Req4kI5w1PlCrjcSu59s5n-dDUJA8ISChb46qjEXRqrheGUPFIOMDh2T79IRgvHZTm/s389/Butter.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_89f40a70",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_aa4077", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_aa4077", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_aa4077", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_aa4077", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_aa4077", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_aa4077", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_aa4077", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_aa4077", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_aa4077", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "d65381",
+        "name": "دجاج ماكسيكان مبشور",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 160 سعرة\nالكربوهيدرات: 3 جم\nالبروتين: 24 جم\nالدهون: 5 جم",
+        "basePrice": 20.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhboGMUoK4AJbzYuBfagG8AhXlgT629ZyvgFXRFQVLbYPX8JGeV6SuDrcj1TGh0zht-O1bPN5eoEy0YLG6Qzk01Ip77sKMucnI6_uHHVh4N43OeGjVq8E1tSBt5p5vFcSsLp59AwsY0_DJi4GDFptVmColVXOEm76PMJ82Q_Cf8U2LFGOpncHvx8irxjXMk/s375/Maxican%20shredded.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_efb9b135",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_d65381", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_d65381", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_d65381", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_d65381", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_d65381", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_d65381", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_d65381", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_d65381", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_d65381", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "87d164",
+        "name": "دجاج بانغ بانغ",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 180 سعرة\nالكربوهيدرات: 4 جم\nالبروتين: 22 جم\nالدهون: 9 جم",
+        "basePrice": 20.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhYa_aSmEPYTyBtd-VfHg-Xfx4OIzeZixstjGtd_wXYz6D7vMZQl7o2u0WGqcTPP-xt3xkmTO0CDAj_txPhM_N8_WL_zRFhyudR1FCw5-oxDn5u7RFbVJfBfl7Z7N0Noms_WhTXUEA7mObJWVtpPl3dgm64qpXt5f4gMVh8GNmmhV-0Uk85OYDPxmjz5fOF/s386/Bang%20bang.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_8494605f",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_87d164", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_87d164", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_87d164", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_87d164", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_87d164", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_87d164", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_87d164", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_87d164", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_87d164", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "27e537",
+        "name": "سمك فيليه مع صلصة شبت",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 190 سعرة\nالكربوهيدرات: 2.5 جم\nالبروتين: 21 جم\nالدهون: 11 جم",
+        "basePrice": 28.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgM0lmmj2KdbhUn-qxrzij_vnIM4HOYt78US0SkWVgw5PfPpya9Lrza-1wKdKEvFE4u5vCFcmpGoWVXSmYvLVGnF4LbH2xpte1scQ7AYtfz5kZXfYp1gnoEad2-0vBS6_gHWlT-r_y7ZuL_AFO7HX2J0Rz3JVsqmkCDIqooHX3vs8fuFtIipDaAi_21Nx5D/s410/Filet%20dill%20sauce.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_08cd4247",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_27e537", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_27e537", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_27e537", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_27e537", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_27e537", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_27e537", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_27e537", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_27e537", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_27e537", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "c1bacc",
+        "name": "سمك فيليه مع صلصة اليمون",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 185 سعرة\nالكربوهيدرات: 2 جم\nالبروتين: 20 جم\nالدهون: 10.5 جم",
+        "basePrice": 32.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjBzP9rBBcBqSGxYYtIo6Ib4U8j_pWd7OzcUgCedDbiir0Zv3PMmuVQ_LIwPtizNgeZdblQPMuq5f8NVylt0cxBYasSGHBAkQRJ_hVN8_hjihtk-Wo7vm_iz2FAmy63XlZjM-4yu9K4_MtU7SpLJ6-47Fqc8U8Yvnb4NK3ojmdrPAAVatqB-q066tXG7dO3/s380/Selmon%20lemon%20sauce.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_10fb55d2",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_c1bacc", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_c1bacc", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_c1bacc", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_c1bacc", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_c1bacc", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_c1bacc", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_c1bacc", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_c1bacc", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_c1bacc", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "03edce",
+        "name": "سمك فيليه نيوتري بوكس",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 210 سعرة\nالكربوهيدرات: 2.5 جم\nالبروتين: 20.5 جم\nالدهون: 14 جم",
+        "basePrice": 28.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgRX0UeuVHlEPYH4RjOh26eiHPdchl1CJ1FS8oicXt_3AV6NyfP-mM5qAoyLqLpe-mwxOARWhJgVFoVvhx-la-ntN9uT_yT1tuXyN2Xb_yF_XitAXGNZsrxhoU0Ttw9KFLlsfaEbzT_CV_M0TaNF726g51rOiEnlX3JmQC-gDZ2vv0crqnDMywymzubQmqF/s389/Nutri%20box%20filet.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_5c715843",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_03edce", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_03edce", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_03edce", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_03edce", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_03edce", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_03edce", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_03edce", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_03edce", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_03edce", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "588b2f",
+        "name": "سمك فيليه مشوي",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 195 سعرة\nالكربوهيدرات: 1.5 جم\nالبروتين: 21 جم\nالدهون: 12 جم",
+        "basePrice": 28.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEikzfHZiPkcxGKeY_nHf-VSlYeHvy0VopFFQ-wDLT5WLI1aSeGGL0Z0pJ9NELTzMVCIg1QiinMl1lfTM0yrcJEqIgrb2aOUzTA8Zx9bAIAzbmt949ORIaVxTxDiZX15jyiv67ivJrm1tM2vJmUZlKDwK3eA_g8Rmsw5TLMJ1v2efwPTh6tHRCzyzrwzETQ4/s351/Grilled%20filet.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_1b1501ef",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_588b2f", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_588b2f", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_588b2f", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_588b2f", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_588b2f", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_588b2f", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_588b2f", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_588b2f", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_588b2f", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "880654",
+        "name": "سمك سلمون مشوي",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 205 سعرة\nالكربوهيدرات: 0 جم\nالبروتين: 21 جم\nالدهون: 14 جم",
+        "basePrice": 32.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiH7q62OhpaznTQpChtz2pFdHo1dYT-zGaHJXstnkbxAJMclr4QHdabojoPuyC-gH4FombaVGMvNhlH1-JNpp6CRuwJwBqgO_1xQf2eNE04Gaph9UBoBANNb8rqTvC1PRc2EGjmtvI4scQEW_D7msL2pMSw4By6RpAjtPJ7F666ye5kIIGWlsp2SM8imQqU/s359/Grilled%20selmon.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_68705a62",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_880654", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_880654", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_880654", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_880654", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_880654", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_880654", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_880654", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_880654", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_880654", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "ad31ca",
+        "name": "سمك السلمون مع صلصة الشبت",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 235 سعرة\nالكربوهيدرات: 1.5 جم\nالبروتين: 21 جم\nالدهون: 16 جم",
+        "basePrice": 32.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEirvJ-Knbu1PbcFz1RqLp8ptjj1mOHmIY6KiyQVOHuSJk-09cEynpSh9s7_TcW195Yrf4-vPF6dT9QPaIZY10bFuFqs4qgORbEComNQs0-3AapVQ2HAbvKjEywvNt8FJ2cPK-QzYJL8BPFnNw8gz01RX1u-dIgUjZH3OEwMtgUR3fHgI65XTU2xthqHYArK/s379/Selmon%20dill%20sauce.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_db69c3f2",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_ad31ca", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_ad31ca", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_ad31ca", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_ad31ca", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_ad31ca", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_ad31ca", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_ad31ca", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_ad31ca", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_ad31ca", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "554140",
+        "name": "سمك السلمون مع صلصة الليمون",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 240 سعرة\nالكربوهيدرات: 1.5 جم\nالبروتين: 22 جم\nالدهون: 16 جم",
+        "basePrice": 32.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiSe-oOCvCMaiQrLDD-VIFsyw7431RNYcgiaENGCXfOYil6cTCOCW_mJEnizoL9hp1b67_W6SjdAjS_Gu-IY0orhk40MWOGec3AR5t8s8gPkknwYg_j4E7fK9p9EB24OZWupW40J2phVAasSGOWSZUcbhAhHs1wRH0itoI3TUg7vlO0k3JqVlrin7gjSd1W/s380/Selmon%20lemon%20sauce.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_36a22559",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_554140", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_554140", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_554140", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_554140", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_554140", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_554140", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_554140", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_554140", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_554140", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "67a641",
+        "name": "سمك السلمون نيوتري بوكس ",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 270 سعرة\nالكربوهيدرات: 1.5 جم\nالبروتين: 22 جم\nالدهون: 19 جم",
+        "basePrice": 32.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhdWTtwnVU8KqYHPN-KwhQZ_zpBPZ_dgNT8O-Q7TsFos51GWWQjt3mmdMjIS3rxbm4lh0yzj-r729cRNrDj8O6Fe8Vk1UOS6H34-wKytRBijml1Uj8bE4Y7OCyjhBB2-uS7KfbpsAmSp2IbzYM6dQu7aShNH_TQdbRIi8QegBYrxixC9-2QfLZSK5oUQnHv/s375/Niutri%20box%20selmon.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_bfec64c1",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_67a641", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_67a641", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_67a641", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_67a641", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_67a641", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_67a641", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_67a641", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_67a641", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_67a641", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "494b15",
+        "name": "سمك سلمون بالكاري",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 195 سعرة\nالكربوهيدرات: 3 جم\nالبروتين: 18 جم\nالدهون: 13 جم",
+        "basePrice": 32.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi7twxOllXWozOPxMjuHTtyPpYed2YTKqeN9-5TAC-lbFAUJHEEjkXt7CVKPY5ji58DcR6VJQq9Jq-JTcFLIStUGgoBR7EivDUYC8Ly3mYA_sWQDrASs8z7eAm_3gVqyJZ5D0TT4K7D_RjJQZlDSpaRKAq-ROa_wR8R1C7ZV-j8Vl7FLjEmN2hN5j_p5fbv/s397/Selmon%20curry.jpg",
+        "customizations": [
+            {
+                "groupName": "الاضافات",
+                "type": "radio",
+                "name": "cust_d7cb3c98",
+                "required": true,
+                "options": [
+                    { "text": "معكرونة بالبروكلي", "value": "PRO_494b15", "price": 0 },
+                    { "text": "معكرونة باستا باني", "value": "PASTA_494b15", "price": 0 },
+                    { "text": "بطاطا مهروسة", "value": "BTATA_494b15", "price": 0 },
+                    { "text": "بطاطا مشوية", "value": "BTATAGRIL_494b15", "price": 0 },
+                    { "text": "رز أبيض", "value": "RICE_494b15", "price": 0 },
+                    { "text": "رز خضروات", "value": "VIG_RICE_494b15", "price": 0 },
+                    { "text": "رز أصفر", "value": "YEL_RICE_494b15", "price": 0 },
+                    { "text": "رز نيوتري بوكس", "value": "NUT_RICE_494b15", "price": 0 },
+                    { "text": "خضروات مشوية", "value": "VIG_GRIL_494b15", "price": 0 }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "d121b7",
+        "name": "لحم  مع الاسباغيتي",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 180 سعرة\nالكربوهيدرات: 20 جم\nالبروتين: 12 جم\nالدهون: 7 جم",
+        "basePrice": 28.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiwd5KQR60YkMUmzUG3G0BQUrSKYc22WS-p2HqaiiD6ypFRP5eL9VDxfE2s411TlPml9QeZ6fkjgOPFN8X-CJgG4DuKqjjBckdFZO2-C4oaG7zto7j5lgUU-szbDfYqfjMtzZVbwqr4mU197Ho88oeera1ZpHLGnmjONv3BmhdxozwTRLD45p3jXdo3U6kn/s378/Spaghetti%20with%20chicken.jpg"
+    },
+    {
+        "id": "c37fc0",
+        "name": "دجاج مع الباستا",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 195 سعرة\nالكربوهيدرات: 20 جم\nالبروتين: 13 جم\nالدهون: 8 جم",
+        "basePrice": 20.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjEidPhpAdgRySj-gcMD3Gf5aYjOX7LuCqLrscsu1P503aTF_lj7Hlzv_6mj5o3yCvbskSxjfKvEVqbkgN1no2TIf1WwI8aEmCegTN2feeeUFcSxWzdO_JZvUW6Mqf_xAfb2FaI0FWYYl2el8CRFW3BC308BdKKCj3Xirlxu28NYDMQddVRxRvLJJ5swE3W/s363/Pasta%20with%20chicken.jpg"
+    },
+    {
+        "id": "180945",
+        "name": "دجاج مع السباغيتي",
+        "category": "الاطباق الرئيسية",
+        "description": "السعرات الحرارية: 155 سعرة\nالكربوهيدرات: 18 جم\nالبروتين: 13 جم\nالدهون: 4 جم",
+        "basePrice": 20.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiwd5KQR60YkMUmzUG3G0BQUrSKYc22WS-p2HqaiiD6ypFRP5eL9VDxfE2s411TlPml9QeZ6fkjgOPFN8X-CJgG4DuKqjjBckdFZO2-C4oaG7zto7j5lgUU-szbDfYqfjMtzZVbwqr4mU197Ho88oeera1ZpHLGnmjONv3BmhdxozwTRLD45p3jXdo3U6kn/s378/Spaghetti%20with%20chicken.jpg"
+    },
+    {
+        "id": "aa81ad",
+        "name": "معكرونة بالبروكلي",
+        "category": "الإضافات",
+        "description": "السعرات الحرارية: 130 سعرة\nالكربوهيدرات: 25 جم\nالبروتين: 5 جم\nالدهون: 1.5 جم",
+        "basePrice": 0.0,
+        "image": ""
+    },
+    {
+        "id": "ad0707",
+        "name": "معكرونة باستا باني",
+        "category": "الإضافات",
+        "description": "السعرات الحرارية: 145 سعرة\nالكربوهيدرات: 29 جم\nالبروتين: 5 جم\nالدهون: 1 جم",
+        "basePrice": 0.0,
+        "image": ""
+    },
+    {
+        "id": "d640f2",
+        "name": " بطاطا مهروسة",
+        "category": "الإضافات",
+        "description": "السعرات الحرارية: 95 سعرة\nالكربوهيدرات: 17.5 جم\nالبروتين: 2 جم\nالدهون: 2.5 جم",
+        "basePrice": 0.0,
+        "image": ""
+    },
+    {
+        "id": "12a870",
+        "name": " بطاطا مشوية",
+        "category": "الإضافات",
+        "description": "السعرات الحرارية: 110 سعرة\nالكربوهيدرات: 18 جم\nالبروتين: 2 جم\nالدهون: 3.5 جم",
+        "basePrice": 0.0,
+        "image": ""
+    },
+    {
+        "id": "7f24c1",
+        "name": "رز أبيض",
+        "category": "الإضافات",
+        "description": "السعرات الحرارية: 130 سعرة\nالكربوهيدرات: 28 جم\nالبروتين: 2.5 جم\nالدهون: 0.3 جم",
+        "basePrice": 0.0,
+        "image": ""
+    },
+    {
+        "id": "c12a04",
+        "name": "رز خضروات",
+        "category": "الإضافات",
+        "description": "السعرات الحرارية: 160 سعرة\nالكربوهيدرات: 28 جم\nالبروتين: 3 جم\nالدهون: 3.5 جم",
+        "basePrice": 0.0,
+        "image": ""
+    },
+    {
+        "id": "6b02ce",
+        "name": "رز أصفر",
+        "category": "الإضافات",
+        "description": "السعرات الحرارية: 150 سعرة\nالكربوهيدرات: 29 جم\nالبروتين: 2.5 جم\nالدهون: 3 جم",
+        "basePrice": 0.0,
+        "image": ""
+    },
+    {
+        "id": "748be9",
+        "name": "رز نيوتري بوكس",
+        "category": "الإضافات",
+        "description": "السعرات الحرارية: 160 سعرة\nالكربوهيدرات: 28 جم\nالبروتين: 3 جم\nالدهون: 3.5 جم",
+        "basePrice": 0.0,
+        "image": ""
+    },
+    {
+        "id": "0b1a01",
+        "name": " خضروات مشوية",
+        "category": "الإضافات",
+        "description": "السعرات الحرارية: 70 سعرة\nالكربوهيدرات: 8 جم\nالبروتين: 2 جم\nالدهون: 4.5 جم",
+        "basePrice": 0.0,
+        "image": ""
+    },
+    {
+        "id": "1b8ccf",
+        "name": "برغر لحم",
+        "category": "الطبق الرئيسي",
+        "description": "السعرات الحرارية: 190 سعرة\nالكربوهيدرات: 0 جم\nالبروتين: 24 جم\nالدهون: 10 جم",
+        "basePrice": 16.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiZ0cZRIf-XYWTGRf1gqY6mphPAVJQo4gmuo_YB512IK9hcrgEWCc1QX3lJDgLsbXw8uwuHTSvIGLKV9VOkiNT6QXWSnX-s4MKjI_Ws2dGrmsFS6mvhe6CbGDqKjW-FWF3ArQX0jnPfrpsCEwsgYxSj0Hic3iB_6UB16VFIZpU3dwo0gfR65M-GEtyQ0P2B/s375/Beef%20burger.jpg"
+    },
+    {
+        "id": "e58767",
+        "name": "برغر دجاج",
+        "category": "الطبق الرئيسي",
+        "description": "السعرات الحرارية: 165 سعرة\nالكربوهيدرات: 1 جم\nالبروتين: 25 جم\nالدهون: 6 جم",
+        "basePrice": 12.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiVCj7cdm5XIJTjxVfz01grAGQ9kJPkDEE3BULn0KIBNkZkS1Mk_kvRtRmgWR6Io-KvMRgsvXU8ilur8koF-1HmLSRiE12sBnjDNSZW1xor_8zmMcLVzPMenNIczgBoJ-qIuhx1dJdcThNWnb8yiT6wKE_HRu9uXJbOU9obfqZifkuacP5vaOlnR9G81JSY/s356/Chicken%20burger.jpg"
+    },
+    {
+        "id": "706558",
+        "name": "برغر لحم ماكسيكان",
+        "category": "الطبق الرئيسي",
+        "description": "السعرات الحرارية: 195 سعرة\nالكربوهيدرات: 2 جم\nالبروتين: 20 جم\nالدهون: 12 جم",
+        "basePrice": 16.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhUxfWWkMuc05hZ15xG3NrbW_hgj6oe26a5km6FWwp9pTXpPdGHJo9DE7plsgQ25NB7j51B-eqFeno04jFeZhdeYzNYmEi0k6Pb2X1PaiOmj-7Ado40IqSRPvDwXkzWMSjcCFO-a9KYCDIIgS3i3Y5eMYOxCtGephSmFZQ412-HcpoQdRUvyU78lWk_9by1/s357/Maxican%20Beef%20burger.jpg"
+    },
+    {
+        "id": "f5db8f",
+        "name": "برغر دجاج ماكسيكان",
+        "category": "الطبق الرئيسي",
+        "description": "السعرات الحرارية: 160 سعرة\nالكربوهيدرات: 2 جم\nالبروتين: 22 جم\nالدهون: 6 جم",
+        "basePrice": 12.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhUxfWWkMuc05hZ15xG3NrbW_hgj6oe26a5km6FWwp9pTXpPdGHJo9DE7plsgQ25NB7j51B-eqFeno04jFeZhdeYzNYmEi0k6Pb2X1PaiOmj-7Ado40IqSRPvDwXkzWMSjcCFO-a9KYCDIIgS3i3Y5eMYOxCtGephSmFZQ412-HcpoQdRUvyU78lWk_9by1/s357/Maxican%20Beef%20burger.jpg"
+    },
+    {
+        "id": "8a34fd",
+        "name": "سلطة فواكه",
+        "category": "طبق جانبي",
+        "description": "السعرات الحرارية: 50 سعرة\nالكربوهيدرات: 13 جم\nالبروتين: 0.5 جم\nالدهون: 0.2 جم",
+        "basePrice": 8.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjnNsE9sh0fV2imqJXUvR0mySTS1EiQZOtBRZWmYegcc60ASljA6bKdiHijN7lgMXz11_D_tSycLik9TQp63ALHJ_nnpAnPFNKE4uoCUwluUi0PKGOyMvWzrshs6wEdq586UpgWrLo3wQMbkVcJYU_N9zS_HFjO4Ht-5wLR9_omZHl9QrLJY_H4WHUqKI51/s375/Mix%20fruits.jpg"
+    },
+    {
+        "id": "7ca5c5",
+        "name": "سلطة يونانية",
+        "category": "طبق جانبي",
+        "description": "السعرات الحرارية: 150 سعرة\nالكربوهيدرات: 6 جم\nالبروتين: 4 جم\nالدهون: 12 جم",
+        "basePrice": 8.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgIpcbcO5fbq809wkcvriEHXFSK1PbQ7ufIkXUvu5pTO8znsfwLEAwG8fSKVglpcl8hAmrUt67iZJoHjcb8tTsATdgiuo6O9eH7UrPq4z5X8gi5bYRlx6YakDzHX7WR0IHCefr49tuIJjjW5jrn4Xucj1qMgBqo0e7mimv6VLUd6oCcbSMa8OkRNaJF1TkE/s352/Greak%20salad.jpg"
+    },
+    {
+        "id": "ad2471",
+        "name": "سلطة خضراء",
+        "category": "طبق جانبي",
+        "description": "السعرات الحرارية: 18 سعرة\nالكربوهيدرات: 3.5 جم\nالبروتين: 1 جم\nالدهون: 0.2 جم",
+        "basePrice": 5.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi303Boa1EfXR74RTjN9UB-_nVvaFlAN_5Nbi0djC_XpCJ9TViLxSq3IOZph_KstVTmZGyUqla_pnDzfSgjM_pyKqf-fqpoXet9utZpkNfgCf8G6IjoTEstzDcNPYn-o1EC3XlGovxm-I-g35iLMXENY4TCZhNuew0fDbKBf535u7QlPCLAErzz5AAci96D/s321/Green.jpg"
+    },
+    {
+        "id": "989316",
+        "name": "سلطة بالدجاج المشوي",
+        "category": "طبق جانبي",
+        "description": "السعرات الحرارية: 130 سعرة\nالكربوهيدرات: 4 جم\nالبروتين: 18 جم\nالدهون: 5 جم",
+        "basePrice": 8.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjC8DkgROy5HI0AOJiTqWRARhGPpyhHsBKcYmlWH6KOvYj0yNXN1vqRNxJGKLvVMIyYaTiMJ7wX4nOIgN1GSnjlJaS9-Ff4bUhK9lpTfvUQf79lSS_y11YsvalPd9TOCQPqVeIIqq0ZpDS4DUd7Q_hY9srrxutPV0qwNOjHRc6R-O_AUIcof6F_NYUKhlzF/s343/Grilled%20chicken%20salad.jpg"
+    },
+    {
+        "id": "61b8c9",
+        "name": "سلطة الشمندر مع الزبادي",
+        "category": "طبق جانبي",
+        "description": "السعرات الحرارية: 65 سعرة\nالكربوهيدرات: 9 جم\nالبروتين: 3 جم\nالدهون: 1.5 جم",
+        "basePrice": 5.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEimnZmrRORGhvGPrAchyphenhyphengW50PnumJKJYShosZGhKR5X9z4qLas7A9WjgqL4A-11gJgdGzyCqHuWw2cOwaHcOpx_JYB22oamn1iFfBqYGhG8zL25BwDMydsbgfNmn_vpuDysgQJxNWPa2VYcYkKKchoMAxp5saX5y6k_9BbNbDnCsYgO4tBL_YpBubSY_CkD/s331/Beetroot%20with%20Yogurt%20salad.jpg"
+    },
+    {
+        "id": "e9d297",
+        "name": "سلطة الكينوا",
+        "category": "طبق جانبي",
+        "description": "السعرات الحرارية: 120 سعرة\nالكربوهيدرات: 16 جم\nالبروتين: 4 جم\nالدهون: 5 جم",
+        "basePrice": 5.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhfgtp__xfAqhpVvrz7vlxRj7Br6UaMDgfIzsI9qEZ4NllGJU-wxLy007gkt4g_Hs8Er8NJ_GspjIYFhNlfLuqtDop_EdzDCti8hvBzoSzg3bpxzf6WVp57W1bhUJdY7QRqQmNI7z4XXR1RqUmQJp3IZ9Tnl5hymsuoxoohyphenhyphenObTHsQKp34Pim1RD7rFGTKe/s289/Quinoa%20salad.jpg"
+    },
+    {
+        "id": "214c5d",
+        "name": "سلطة زبادي",
+        "category": "طبق جانبي",
+        "description": "السعرات الحرارية: 55 سعرة\nالكربوهيدرات: 5 جم\nالبروتين: 4 جم\nالدهون: 3 جم",
+        "basePrice": 5.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjLpHC-uJaJQ-3NkPrBnmMB_aP05y8sZ7lRlG_HhkEvPC1FOvkng3FjrgnnaCZLy9c-z6wHSv1UTv2d__PGjC3zhQtbJ6s16AzyQLTXTTdcKr_8p-EiSS7ddAtJvRabwFoA3B4Hl_xEHPLu3gsGHj_c0CnpPTkW2MBys2ogcfNSodGfHNWH36FJZpf2eQne/s317/Yogurt%20salad.jpg"
+    },
+    {
+        "id": "c69f8f",
+        "name": "سلطة مع الفاصوليا",
+        "category": "طبق جانبي",
+        "description": "السعرات الحرارية: 110 سعرة\nالكربوهيدرات: 15 جم\nالبروتين: 6 جم\nالدهون: 3 جم",
+        "basePrice": 8.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi-4OEcoWJg3ZiEKke6bKGvBo36xVu8120NOpQU4KqPnyQ9MyTn-sDcA0LGwe6cCLQjMy20arKhxXH-RhcNsF-WXgKslpKgj8JIlFDYbbMSZmKqfbXOHjmjc5FB1WMh0z0d730psjcQWc-DC8xjyu81ILoN_bpglA3cp2tbxcMPUYWATfLD7ydHcfqU8bau/s307/Beans%20salad.jpg"
+    },
+    {
+        "id": "77a399",
+        "name": "سلطة سيزر",
+        "category": "طبق جانبي",
+        "description": "السعرات الحرارية: 95 سعرة\nالكربوهيدرات: 6 جم\nالبروتين: 3 جم\nالدهون: 7 جم",
+        "basePrice": 8.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_qMTvVDqVubbJncHI33Z0Knjk_RaQa3MHBXWD-RH_wYyjMrp0FwsAm9uKzIMBh0XSjKUfOae7Pqc5BYhyA-b6dLWaoOQPxA1qYMzKGmR5bh5RfoFOqMnPP_Jxeq-QRZdAWCMJw2CHeWlXCbN8ij6AHaOUhxy-Tgww9tWTE_nECcpN3U_yRHZ4B4GwNVhB/s368/Ceaser%20salad.jpg"
+    },
+    {
+        "id": "21795a",
+        "name": "سلطة جبنة فيتا",
+        "category": "طبق جانبي",
+        "description": "السعرات الحرارية: 120 سعرة\nالكربوهيدرات: 6 جم\nالبروتين: 3.5 جم\nالدهون: 9 جم",
+        "basePrice": 8.0,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi2QUhkMgoirmLhBd1ERhHWCJLEWBZKxCnlY7im80hPoI5E04zwkmFHezCsEbSChBOtwLwusV206sWPJaeCnhPfgxgLV_8Eo05__EEjDgRYbgxEd0czTdKTEAjRRGlY6TxeKyGSY8wb2QQic2UB6VUdZw2Z9cYeCQTWg_5wUl0GKhSsmjD5tE1J_fdjHn4C/s305/Feta%20salad.jpg"
+    }
+];
+
+        const modalOverlay = document.getElementById('customization-modal-overlay');
+        const menuSectionsContainer = document.getElementById('menu-sections');
+        const filtersContainer = document.getElementById('filters-container');
+        const cartItemsListElement = document.getElementById('cart-items-list');
+        const searchInput = document.getElementById('search-input');
+        const toggleViewBtn = document.getElementById('toggle-view-btn');
+        const preloader = document.getElementById('preloader');
+        const scrollToTopBtn = document.getElementById('scroll-to-top-btn');
+        const cartToggleButton = document.getElementById('cart-toggle-btn');
+        const closeCartButtonSidebar = document.getElementById('close-cart-btn-sidebar');
+        const cartSidebar = document.getElementById('cart-sidebar');
+        const pageOverlay = document.getElementById('page-overlay');
+        const cartCountBadge = document.getElementById('cart-count-badge');
+        const clearCartBtn = document.getElementById('clear-cart-btn');
+        const notificationToast = document.getElementById('notification-toast');
+        const notificationMessage = document.getElementById('notification-message');
+        const generalOrderNotesTextarea = document.getElementById('general-order-notes');
+        const deliveryTypeRadios = document.querySelectorAll('input[name="deliveryType"]');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        const emptyCartMessage = document.getElementById('empty-cart-message');
+        const modalContent = document.getElementById('customization-modal-content');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const modalProductImage = document.getElementById('modal-product-image');
+        const modalProductTitle = document.getElementById('modal-product-title');
+        const modalProductBasePrice = document.getElementById('modal-product-base-price');
+        const modalCurrentItemPrice = document.getElementById('modal-current-item-price');
+        const modalCustomizationsContainer = document.getElementById('modal-customizations-container');
+        const modalQuantityInput = document.getElementById('modal-quantity');
+        const modalAddToCartBtn = document.getElementById('modal-add-to-cart-btn');
+        const cartSubtotalAmountElement = document.getElementById('cart-subtotal-amount');
+        const cartVatAmountElement = document.getElementById('cart-vat-amount');
+        const deliveryFeeLineElement = document.getElementById('delivery-fee-line');
+        const deliveryFeeAmountElement = document.getElementById('delivery-fee-amount');
+        const cartGrandTotalAmountElement = document.getElementById('cart-grand-total-amount');
+
+        const tableNumberLineElement = document.getElementById('table-number-line');
+        const tableNumberDisplayElement = document.getElementById('table-number-display');
+
+
+        let cart = [];
+        let currentDeliveryType = 'pickup';
+        let currentProductIdInModal = null;
+        let currentProductInModalObject = null;
+        let notificationTimeout;
+        const whatsappNumber = "966552599891";
+        let currentActiveFilter = 'all';
+        let currentSearchTerm = '';
+        let isCompactView = false;
+        let currentTableNumber = null;
+
+        function getTableNumberFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const table = urlParams.get('table');
+            return table ? table.trim() : null;
+        }
+
+        window.addEventListener('load', () => {
+            if (preloader) { preloader.classList.add('hidden'); }
+            initScrollAnimations();
+            currentTableNumber = getTableNumberFromUrl();
+            updateCartDisplay();
+        });
+
+        if (scrollToTopBtn) {
+            window.addEventListener('scroll', () => {
+                scrollToTopBtn.style.display = (window.scrollY > 300) ? 'flex' : 'none';
+            });
+            scrollToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        function initScrollAnimations() {
+            const animatedElements = document.querySelectorAll('.animate-on-scroll');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            animatedElements.forEach(el => observer.observe(el));
+        }
+
+        function saveCartToLocalStorage() { localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart)); }
+        function loadCartFromLocalStorage() {
+            const storedCart = localStorage.getItem(CART_STORAGE_KEY);
+            cart = storedCart ? JSON.parse(storedCart) : [];
+        }
+
+        function loadViewPreference() {
+            const storedView = localStorage.getItem(COMPACT_VIEW_STORAGE_KEY);
+            const body = document.body;
+            const iconElement = toggleViewBtn.querySelector('i');
+            if (storedView === 'true') {
+                isCompactView = true;
+                body.classList.add('compact-view');
+                toggleViewBtn.classList.add('active-compact-view');
+                if (iconElement) iconElement.className = 'fas fa-th-list';
+                toggleViewBtn.title = "عرض عادي";
+            } else {
+                isCompactView = false;
+                body.classList.remove('compact-view');
+                toggleViewBtn.classList.remove('active-compact-view');
+                if (iconElement) iconElement.className = 'fas fa-th-large';
+                toggleViewBtn.title = "عرض مضغوط";
+            }
+        }
+        function saveViewPreference() { localStorage.setItem(COMPACT_VIEW_STORAGE_KEY, isCompactView); }
+
+        function displayFilterButtons() {
+            filtersContainer.innerHTML = '';
+            const categories = ['all', ...new Set(productsData.map(p => p.category))];
+            categories.forEach(category => {
+                const button = document.createElement('button');
+                button.classList.add('filter-btn', 'animate-on-scroll');
+                button.dataset.category = category;
+                button.textContent = category === 'all' ? 'عرض الكل' : category;
+                if (category === currentActiveFilter) button.classList.add('active');
+                button.addEventListener('click', function() {
+                    currentActiveFilter = this.dataset.category;
+                    displayProducts();
+                    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                });
+                filtersContainer.appendChild(button);
+            });
+            initScrollAnimations();
+        }
+
+        function displayProducts() {
+            menuSectionsContainer.innerHTML = '';
+            let filteredProducts = productsData;
+            if (currentActiveFilter !== 'all' && currentActiveFilter) {
+                filteredProducts = filteredProducts.filter(p => p.category === currentActiveFilter);
+            }
+            if (currentSearchTerm) {
+                const searchTermLower = currentSearchTerm.toLowerCase();
+                filteredProducts = filteredProducts.filter(p =>
+                    p.name.toLowerCase().includes(searchTermLower) ||
+                    (p.description && p.description.toLowerCase().includes(searchTermLower)) ||
+                    p.category.toLowerCase().includes(searchTermLower)
+                );
+            }
+            if (filteredProducts.length === 0) {
+                menuSectionsContainer.innerHTML = `<p style="text-align:center; padding: 30px; color: var(--text-muted); font-size: 1.1em;">لا توجد منتجات تطابق بحثك أو الفلتر الحالي.</p>`;
+                return;
+            }
+            const productsByCategory = filteredProducts.reduce((acc, product) => {
+                if (!acc[product.category]) acc[product.category] = [];
+                acc[product.category].push(product);
+                return acc;
+            }, {});
+            const displayOrderCategories = currentActiveFilter === 'all' || !currentActiveFilter
+                ? [...new Set(productsData.map(p => p.category))]
+                : [currentActiveFilter];
+            displayOrderCategories.forEach(category => {
+                const productsInCategory = productsByCategory[category];
+                if (!productsInCategory || productsInCategory.length === 0) return;
+                const categorySection = document.createElement('div');
+                categorySection.classList.add('category-section', 'animate-on-scroll');
+                const categoryTitle = document.createElement('h2');
+                categoryTitle.classList.add('category-title');
+                categoryTitle.textContent = category;
+                categorySection.appendChild(categoryTitle);
+                const productsGrid = document.createElement('div');
+                productsGrid.classList.add('products-grid');
+                productsInCategory.forEach(product => {
+                    const productCard = document.createElement('div');
+                    productCard.classList.add('product-card', 'animate-on-scroll');
+                    let actionButtonHTML = '';
+                    if (product.customizations && product.customizations.length > 0) {
+                        actionButtonHTML = `<button class="customize-btn" onclick="openCustomizationModal('${product.id}')"><i class="fas fa-sliders-h"></i> تخصيص</button>`;
+                    } else {
+                        actionButtonHTML = `<button class="direct-add-btn" onclick="addDirectToCart('${product.id}')"><i class="fas fa-cart-plus"></i> أضف للسلة</button>`;
+                    }
+                    
+                    let nutritionHTML = '';
+                    if (product.description) {
+                        nutritionHTML = '<div class="product-nutrition">';
+                        const nutritionParts = product.description.split('\n');
+                        const orderedParts = { calories: null, carbs: null, protein: null, fats: null, other: [] };
+
+                        nutritionParts.forEach(part => {
+                            if (part.includes('السعرات الحرارية')) {
+                                orderedParts.calories = `<span><i class="fas fa-fire-alt"></i> ${part}</span>`;
+                            } else if (part.includes('الكربوهيدرات')) {
+                                orderedParts.carbs = `<span><i class="fas fa-wheat-awn"></i> ${part}</span>`;
+                            } else if (part.includes('البروتين')) {
+                                orderedParts.protein = `<span><i class="fas fa-dumbbell"></i> ${part}</span>`;
+                            } else if (part.includes('الدهون')) {
+                                orderedParts.fats = `<span><i class="fas fa-droplet"></i> ${part}</span>`;
+                            } else if (part.trim() !== '') {
+                                orderedParts.other.push(`<span>${part}</span>`);
+                            }
+                        });
+                        
+                        // Add in a consistent order: Calories, Carbs, Protein, Fats
+                        if (orderedParts.calories) nutritionHTML += orderedParts.calories;
+                        if (orderedParts.carbs) nutritionHTML += orderedParts.carbs;
+                        if (orderedParts.protein) nutritionHTML += orderedParts.protein;
+                        if (orderedParts.fats) nutritionHTML += orderedParts.fats;
+                        if (orderedParts.other.length > 0) nutritionHTML += orderedParts.other.join('');
+
+                        nutritionHTML += '</div>';
+                    } else {
+                        nutritionHTML = '<div class="product-nutrition"></div>';
+                    }
+
+                    productCard.innerHTML = `
+                        <div class="product-image-container">
+                            <img src="${product.image || 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgvSfza-s9_HdFVf6lSNoxB4zGVSofDh4h4cJGy5OfMsKOx1CIOwPrNQh3jWHH8uZF2IT4lKA51vRdre0ZUBM_DyPBqzblb0aRSH9ikTkEwSKvlb-zcs3Q8S3KYQD1v2QKEjx2ZpmXJmCvH99HIsCLQ75LkDUxh0c1m1WMy-w_vMsiclH7BTBhN_Rh30IWh/s300/WhatsApp%20Image%202025-08-03%20at%201.35.08%20PM.jpeg'}" alt="${product.name}" loading="lazy">
+                        </div>
+                        <div class="product-card-content">
+                            <h3>${product.name}</h3>
+                            ${nutritionHTML}
+                            <p class="price">${product.basePrice.toFixed(2)} ريال</p>
+                            <div class="product-card-actions">${actionButtonHTML}</div>
+                        </div>`;
+                    productsGrid.appendChild(productCard);
+                });
+                categorySection.appendChild(productsGrid);
+                menuSectionsContainer.appendChild(categorySection);
+            });
+            initScrollAnimations();
+        }
+
+        window.addDirectToCart = function(productId) {
+            const product = productsData.find(p => p.id === productId);
+            if (!product) return;
+            const quantity = 1;
+            const cartItemId = productId;
+            const existingItemIndex = cart.findIndex(item => item.cartItemId === cartItemId);
+            if (existingItemIndex > -1) cart[existingItemIndex].quantity += quantity;
+            else cart.push({ cartItemId, id: productId, name: product.name, basePrice: product.basePrice, finalPricePerItem: product.basePrice, quantity, customizations: [], image: product.image });
+            updateCartDisplay();
+            saveCartToLocalStorage();
+            showNotification(`"${product.name}" أضيف إلى طلباتك.`);
+        };
+
+        function updateModalPrice() {
+            if (!currentProductInModalObject) return;
+            let currentPrice = currentProductInModalObject.basePrice;
+            currentProductInModalObject.customizations?.forEach(group => {
+                const safeGroupName = group.name.replace(/\s+/g, '_');
+                const groupElement = document.getElementById(`modal-group-${currentProductInModalObject.id}-${safeGroupName}`);
+                if (!groupElement) return;
+                if (group.type === 'radio') {
+                    const selectedRadio = groupElement.querySelector(`input[name="modal-${currentProductInModalObject.id}-${safeGroupName}"]:checked`);
+                    if (selectedRadio) currentPrice += parseFloat(selectedRadio.dataset.price);
+                } else if (group.type === 'checkbox') {
+                    const checkedBoxes = groupElement.querySelectorAll(`input[name="modal-${currentProductInModalObject.id}-${safeGroupName}"]:checked`);
+                    checkedBoxes.forEach(cb => currentPrice += parseFloat(cb.dataset.price));
+                }
+            });
+            modalCurrentItemPrice.textContent = `السعر مع الإضافات: ${currentPrice.toFixed(2)} ريال`;
+        }
+
+        window.openCustomizationModal = function(productId) {
+            currentProductIdInModal = productId;
+            currentProductInModalObject = productsData.find(p => p.id === productId);
+            if (!currentProductInModalObject) return;
+            modalProductImage.src = currentProductInModalObject.image || 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgvSfza-s9_HdFVf6lSNoxB4zGVSofDh4h4cJGy5OfMsKOx1CIOwPrNQh3jWHH8uZF2IT4lKA51vRdre0ZUBM_DyPBqzblb0aRSH9ikTkEwSKvlb-zcs3Q8S3KYQD1v2QKEjx2ZpmXJmCvH99HIsCLQ75LkDUxh0c1m1WMy-w_vMsiclH7BTBhN_Rh30IWh/s300/WhatsApp%20Image%202025-08-03%20at%201.35.08%20PM.jpeg';
+            modalProductTitle.textContent = currentProductInModalObject.name;
+            modalProductBasePrice.textContent = `السعر الأساسي: ${currentProductInModalObject.basePrice.toFixed(2)} ريال`;
+            modalQuantityInput.value = 1;
+            modalCustomizationsContainer.innerHTML = '';
+            if (currentProductInModalObject.customizations) {
+                currentProductInModalObject.customizations.forEach((group, groupIndex) => {
+                    const safeGroupName = group.name.replace(/\s+/g, '_');
+                    const fieldset = document.createElement('fieldset');
+                    fieldset.classList.add('option-group');
+                    fieldset.id = `modal-group-${currentProductInModalObject.id}-${safeGroupName}`;
+                    const legend = document.createElement('legend');
+                    legend.textContent = `${group.groupName}${group.required ? ' (مطلوب)' : ''}`;
+                    fieldset.appendChild(legend);
+                    group.options.forEach((opt, optIndex) => {
+                        const optionDiv = document.createElement('div');
+                        optionDiv.classList.add('option-item');
+                        const input = document.createElement('input');
+                        input.type = group.type;
+                        input.id = `modal-opt-${currentProductInModalObject.id}-${safeGroupName}-${optIndex}`;
+                        input.name = `modal-${currentProductInModalObject.id}-${safeGroupName}`;
+                        input.value = opt.value;
+                        input.dataset.price = opt.price;
+                        input.addEventListener('change', updateModalPrice);
+                        const label = document.createElement('label');
+                        label.htmlFor = input.id;
+                        label.textContent = `${opt.text} ${opt.price > 0 ? `(+${opt.price.toFixed(2)} ريال)` : ''}`;
+                        optionDiv.appendChild(input);
+                        optionDiv.appendChild(label);
+                        fieldset.appendChild(optionDiv);
+                    });
+                    modalCustomizationsContainer.appendChild(fieldset);
+                });
+            }
+            updateModalPrice();
+            modalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        modalQuantityInput.addEventListener('input', updateModalPrice);
+
+        function closeCustomizationModal() {
+            modalOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+            currentProductIdInModal = null;
+            currentProductInModalObject = null;
+        }
+        modalCloseBtn.addEventListener('click', closeCustomizationModal);
+        modalOverlay.addEventListener('click', (event) => {
+            if (event.target === modalOverlay) closeCustomizationModal();
+        });
+
+        modalAddToCartBtn.addEventListener('click', function() {
+            if (!currentProductInModalObject) return;
+            const product = currentProductInModalObject;
+            const quantity = parseInt(modalQuantityInput.value);
+            if (isNaN(quantity) || quantity <= 0) { alert("الرجاء تحديد كمية صحيحة."); return; }
+            let itemPrice = product.basePrice;
+            const selectedCustomizations = [];
+            let cartItemIdSuffix = '';
+            let allRequiredSelected = true;
+            if (product.customizations) {
+                for (const group of product.customizations) {
+                    const safeGroupName = group.name.replace(/\s+/g, '_');
+                    const groupElement = document.getElementById(`modal-group-${product.id}-${safeGroupName}`);
+                    if (!groupElement) { console.error(`Group element not found for ${safeGroupName}`); continue; }
+                    let groupSelectedThisIteration = false;
+                    if (group.type === 'radio') {
+                        const selectedRadio = groupElement.querySelector(`input[name="modal-${product.id}-${safeGroupName}"]:checked`);
+                        if (selectedRadio) {
+                            itemPrice += parseFloat(selectedRadio.dataset.price);
+                            selectedCustomizations.push({ group: group.groupName, text: selectedRadio.labels[0].textContent.split(' (+')[0].trim(), price: parseFloat(selectedRadio.dataset.price) });
+                            cartItemIdSuffix += `-${selectedRadio.value}`;
+                            groupSelectedThisIteration = true;
+                        }
+                        if (group.required && !groupSelectedThisIteration) { alert(`الرجاء اختيار "${group.groupName}" لمنتج "${product.name}".`); allRequiredSelected = false; break; }
+                    } else if (group.type === 'checkbox') {
+                        const checkedBoxes = groupElement.querySelectorAll(`input[name="modal-${product.id}-${safeGroupName}"]:checked`);
+                        let atLeastOneCheckboxSelected = false;
+                        checkedBoxes.forEach(cb => {
+                            itemPrice += parseFloat(cb.dataset.price);
+                            selectedCustomizations.push({ group: group.groupName, text: cb.labels[0].textContent.split(' (+')[0].trim(), price: parseFloat(cb.dataset.price) });
+                            cartItemIdSuffix += `-${cb.value}`;
+                            atLeastOneCheckboxSelected = true;
+                        });
+                        if (group.required && !atLeastOneCheckboxSelected) { alert(`الرجاء اختيار واحد على الأقل من "${group.groupName}" لمنتج "${product.name}".`); allRequiredSelected = false; break; }
+                    }
+                }
+            }
+            if (!allRequiredSelected) return;
+            const cartItemId = `${product.id}${cartItemIdSuffix}`;
+            const existingItemIndex = cart.findIndex(item => item.cartItemId === cartItemId);
+            if (existingItemIndex > -1) cart[existingItemIndex].quantity += quantity;
+            else cart.push({ cartItemId, id: product.id, name: product.name, basePrice: product.basePrice, finalPricePerItem: itemPrice, quantity, customizations: selectedCustomizations, image: product.image });
+            updateCartDisplay();
+            saveCartToLocalStorage();
+            showNotification(`"${product.name}" أضيف إلى طلباتك.`);
+            closeCustomizationModal();
+        });
+
+        function showNotification(message) {
+            const iconElement = notificationToast.querySelector('i');
+            if (iconElement) iconElement.className = 'fas fa-check-circle';
+            notificationMessage.textContent = message;
+            notificationToast.classList.add('show');
+            if (notificationTimeout) clearTimeout(notificationTimeout);
+            notificationTimeout = setTimeout(() => notificationToast.classList.remove('show'), 3000);
+        }
+
+        function updateCartDisplay() {
+            cartItemsListElement.innerHTML = '';
+            let subtotal = 0;
+            let totalItemsCount = 0;
+            const vatLineDetails = document.getElementById('vat-line-details');
+
+            if (currentTableNumber && tableNumberLineElement && tableNumberDisplayElement) {
+                tableNumberDisplayElement.textContent = currentTableNumber;
+                tableNumberLineElement.style.display = 'flex';
+                if (document.querySelector('.delivery-options')) {
+                    document.querySelector('.delivery-options').style.display = 'none';
+                }
+            } else if (tableNumberLineElement) {
+                tableNumberLineElement.style.display = 'none';
+                 if (document.querySelector('.delivery-options')) {
+                    document.querySelector('.delivery-options').style.display = 'block';
+                }
+            }
+
+            if (cart.length === 0) {
+                emptyCartMessage.style.display = 'list-item';
+                clearCartBtn.style.display = 'none';
+                if (vatLineDetails) vatLineDetails.style.display = 'none';
+                if (currentTableNumber && tableNumberLineElement) {
+                     tableNumberLineElement.style.display = 'flex';
+                } else if (tableNumberLineElement) {
+                    tableNumberLineElement.style.display = 'none';
+                }
+
+            } else {
+                emptyCartMessage.style.display = 'none';
+                clearCartBtn.style.display = 'block';
+                if (vatLineDetails) vatLineDetails.style.display = 'flex';
+                cart.forEach((item, index) => {
+                    const listItem = document.createElement('li');
+                    let customizationsText = '';
+                    if (item.customizations && item.customizations.length > 0) {
+                        customizationsText += '<div class="item-customizations">';
+                        item.customizations.forEach(cust => {
+                            customizationsText += `<div>- ${cust.text}${cust.price > 0 ? ` (+${cust.price.toFixed(2)} ر.س)` : ''}</div>`;
+                        });
+                        customizationsText += '</div>';
+                    }
+                    listItem.innerHTML = `
+                        <div class="cart-item-details">
+                            <span class="item-name">${item.name}</span>
+                            ${customizationsText}
+                            <div class="item-qty-price">الكمية: ${item.quantity} × ${item.finalPricePerItem.toFixed(2)} ر.س</div>
+                        </div>
+                        <div class="cart-item-actions">
+                            <span class="item-total-price">${(item.finalPricePerItem * item.quantity).toFixed(2)} ر.س</span>
+                            <button class="remove-item-btn" onclick="removeFromCart(${index})" aria-label="إزالة ${item.name}"><i class="fas fa-trash-alt"></i></button>
+                        </div>`;
+                    cartItemsListElement.appendChild(listItem);
+                    subtotal += item.finalPricePerItem * item.quantity;
+                    totalItemsCount += item.quantity;
+                });
+            }
+            
+            cartSubtotalAmountElement.textContent = subtotal.toFixed(2);
+            const vatAmount = cart.length > 0 ? (subtotal * VAT_RATE) / (1 + VAT_RATE) : 0;
+            if (cartVatAmountElement) cartVatAmountElement.textContent = vatAmount.toFixed(2);
+            
+            let currentDeliveryFee = 0;
+            if (currentDeliveryType === 'delivery' && cart.length > 0 && !currentTableNumber) {
+                currentDeliveryFee = deliveryFee;
+                deliveryFeeLineElement.style.display = 'flex';
+                deliveryFeeAmountElement.textContent = deliveryFee.toFixed(2);
+            } else {
+                deliveryFeeLineElement.style.display = 'none';
+                 deliveryFeeAmountElement.textContent = (0).toFixed(2);
+            }
+            const grandTotal = subtotal + currentDeliveryFee;
+            cartGrandTotalAmountElement.textContent = grandTotal.toFixed(2);
+            cartCountBadge.textContent = totalItemsCount;
+            cartCountBadge.style.display = totalItemsCount > 0 ? 'inline-block' : 'none';
+        }
+
+
+        deliveryTypeRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (currentTableNumber && this.value === 'delivery') {
+                    alert("لا يمكن اختيار التوصيل عند وجود رقم طاولة. سيتم اعتبار الطلب داخل المطعم.");
+                    document.querySelector('input[name="deliveryType"][value="pickup"]').checked = true;
+                    currentDeliveryType = 'pickup';
+                } else {
+                    currentDeliveryType = this.value;
+                }
+                updateCartDisplay();
+            });
+        });
+
+        window.removeFromCart = function(itemIndex) {
+            const removedItemName = cart[itemIndex].name;
+            cart.splice(itemIndex, 1);
+            updateCartDisplay();
+            saveCartToLocalStorage();
+            showNotification(`"${removedItemName}" أزيل من الطلبات.`);
+        }
+        function emptyCart() {
+            if (cart.length === 0) return;
+            if (confirm("هل أنت متأكد أنك تريد إفراغ سلة الطلبات؟")) {
+                cart = [];
+                updateCartDisplay();
+                saveCartToLocalStorage();
+                showNotification("تم إفراغ سلة الطلبات.");
+            }
+        }
+        clearCartBtn.addEventListener('click', emptyCart);
+        function emptyCartAfterCheckout() {
+            cart = [];
+            updateCartDisplay();
+            saveCartToLocalStorage();
+            closeCartSidebar();
+        }
+        checkoutBtn.addEventListener('click', function() {
+            if (cart.length === 0) { alert("سلة الطلبات فارغة. الرجاء إضافة وجبات أولاً."); return; }
+
+            let message = "طلب جديد من مطعم NUTRI BOX - نيوتري بوكس\n\n";
+            if (currentTableNumber) {
+                message += `رقم الطاولة: ${currentTableNumber}\n\n`;
+                message += "------------------------------\n";
+                message += "        تفاصيل الطلب (محلي)\n";
+            } else {
+                 message += "------------------------------\n";
+                 message += "        تفاصيل الطلب\n";
+            }
+            message += "------------------------------\n\n";
+            let calculatedSubtotal = 0; 
+
+            cart.forEach((item, index) => {
+                const itemTotal = item.finalPricePerItem * item.quantity;
+                message += `${index + 1}. ${item.name}\n`;
+                if (item.customizations && item.customizations.length > 0) {
+                    message += `  الإضافات:\n`;
+                    item.customizations.forEach(cust => {
+                        message += `    - ${cust.text}${cust.price > 0 ? ` (+${cust.price.toFixed(2)} ر.س)` : ''}\n`;
+                    });
+                }
+                message += `  الكمية: ${item.quantity}\n`;
+                message += `  سعر القطعة: ${item.finalPricePerItem.toFixed(2)} ر.س\n`;
+                message += `  إجمالي الصنف: ${itemTotal.toFixed(2)} ر.س\n\n`;
+                calculatedSubtotal += itemTotal;
+            });
+
+            message += "------------------------------\n";
+            message += `المجموع الفرعي (شامل الضريبة): ${calculatedSubtotal.toFixed(2)} ر.س\n`;
+            const calculatedVatAmount = (calculatedSubtotal * VAT_RATE) / (1 + VAT_RATE);
+            message += `منها ضريبة القيمة المضافة (15%): ${calculatedVatAmount.toFixed(2)} ر.س\n`;
+            
+            let finalTotalForMessage = calculatedSubtotal;
+
+            if (currentTableNumber) {
+                message += `نوع الطلب: داخل المطعم (الطاولة ${currentTableNumber})\n`;
+            } else {
+                const selectedDeliveryTypeRadio = document.querySelector('input[name="deliveryType"]:checked');
+                const actualDeliveryType = selectedDeliveryTypeRadio ? selectedDeliveryTypeRadio.value : 'pickup';
+
+                if (actualDeliveryType === 'delivery') {
+                    message += `نوع الطلب: توصيل (داخل الحي)\n`;
+                    message += `رسوم التوصيل: ${deliveryFee.toFixed(2)} ر.س\n`;
+                    finalTotalForMessage += deliveryFee;
+                } else {
+                    message += `نوع الطلب: استلام من المطعم\n`;
+                }
+            }
+
+            const generalNotes = generalOrderNotesTextarea.value.trim();
+            if (generalNotes) message += `\nملاحظات إضافية:\n   ${generalNotes}\n`;
+            message += `\n------------------------------\n`;
+            message += `الإجمالي الكلي: ${finalTotalForMessage.toFixed(2)} ريال سعودي\n\n`;
+            message += "شكراً لطلبكم.";
+
+
+            const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+            showNotification("جاري تحويلك للواتساب لإرسال الطلب...");
+            setTimeout(() => {
+                 window.open(whatsappUrl, '_blank');
+                 emptyCartAfterCheckout();
+            }, 1500);
+        });
+
+        function openCartSidebar() { cartSidebar.classList.add('open'); pageOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
+        function closeCartSidebar() { cartSidebar.classList.remove('open'); pageOverlay.classList.remove('active'); document.body.style.overflow = ''; }
+        cartToggleButton.addEventListener('click', openCartSidebar);
+        closeCartButtonSidebar.addEventListener('click', closeCartSidebar);
+        pageOverlay.addEventListener('click', (event) => {
+            if (cartSidebar.classList.contains('open') && event.target === pageOverlay) closeCartSidebar();
+        });
+        searchInput.addEventListener('input', function() { currentSearchTerm = this.value.trim(); displayProducts(); });
+        toggleViewBtn.addEventListener('click', function() {
+            isCompactView = !isCompactView;
+            document.body.classList.toggle('compact-view', isCompactView);
+            this.classList.toggle('active-compact-view', isCompactView);
+            saveViewPreference();
+            const iconElement = this.querySelector('i');
+            if (isCompactView) { if (iconElement) iconElement.className = 'fas fa-th-list'; this.title = "عرض عادي"; }
+            else { if (iconElement) iconElement.className = 'fas fa-th-large'; this.title = "عرض مضغوط"; }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            currentTableNumber = getTableNumberFromUrl();
+            loadCartFromLocalStorage();
+            loadViewPreference();
+            displayFilterButtons();
+            displayProducts();
+            updateCartDisplay();
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+
+            if (currentTableNumber) {
+                if (document.querySelector('.delivery-options')) {
+                    document.querySelector('.delivery-options').style.display = 'none';
+                }
+                currentDeliveryType = 'pickup';
+                const pickupRadio = document.querySelector('input[name="deliveryType"][value="pickup"]');
+                if (pickupRadio) pickupRadio.checked = true;
+            } else {
+                 if (document.querySelector('.delivery-options')) {
+                    document.querySelector('.delivery-options').style.display = 'block';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
